@@ -24,8 +24,6 @@ public class Resorces : MonoBehaviour
         for(int i = 0; i < SetSprites.Length; i++)Sprites.Add(NameSprites[i],SetSprites[i]);
         
         for(int i=0; i < NameMaterials.Length && i < SetMaterials.Length ;i++)Materials.Add(SetMaterials[i],NameMaterials[i]);
-
-        gameObject.AddComponent<RailNetwork>();
     }
 
 }

@@ -4,27 +4,17 @@ using UnityEngine;
 using UnityEngine.Splines;
 using UnityEngine.Splines.ExtrusionShapes;
 
-public class RailNetwork : MonoBehaviour
+public static class RailNetwork
 {
-    public SplineContainer railSplines;
-    public static RailNetwork Instance;
-    private static SplineExtrude railRoad;
+    private static List<Spline> splines;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static void Start()
     {
-        Instance = this;
-        railSplines = gameObject.AddComponent<SplineContainer>();
-        railRoad = gameObject.AddComponent<SplineExtrude>();
-        railRoad.Container = railSplines;
-        railRoad.Radius = 0.5f;
+        splines = new List<Spline>();
         
 
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

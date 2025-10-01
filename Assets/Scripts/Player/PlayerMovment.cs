@@ -127,7 +127,7 @@ public class PlayerMovment : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            RailPlacer.HandlePlacementInput(hit.point); // Now static
+            //RailPlacer.HandlePlacementInput(hit.point); // Now static
         }
 
 }
