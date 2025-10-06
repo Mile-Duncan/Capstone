@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.Splines;
 
 public class Resorces : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class Resorces : MonoBehaviour
     public static Dictionary<string,Material> Materials = new Dictionary<string, Material>();
 
     public static string LoggedDataPath = "./Assets/Saved";
-
+    
     
     // Start is called before the first frame update
     void Start()

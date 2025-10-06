@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 
 public class TileDecorator
 {
-    private const float GeneralBiomeSizeMultiplyer = 400f;
+    private const float GeneralBiomeSizeMultiplyer = 800f;
 
     private float XPos;    
     private float YLevel;
@@ -75,11 +75,11 @@ public class TileDecorator
 
         if(SubY>50)SubTypes[i] = "Snow";
         else if(SubY>15)SubTypes[i] = "Stone";
-        else if (SubY >= 0.5)
+        else if (SubY >= 0.4)
         {
             float Biome = Mathf.PerlinNoise((SubX/GeneralBiomeSizeMultiplyer - TileManager.Seed), (SubZ/GeneralBiomeSizeMultiplyer - TileManager.Seed));
-            if( Biome > 0.75)SubTypes[i] = "Sand";
-            else if (Biome > 0.5) SubTypes[i] = "Grass";
+            if( Biome > 0.65)SubTypes[i] = "Sand";
+            else if (Biome > 0.47) SubTypes[i] = "Grass";
             else SubTypes[i] = "Forest";
         }
         else SubTypes[i] = "Dirt";

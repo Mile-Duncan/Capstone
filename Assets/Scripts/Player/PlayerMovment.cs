@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerMovment : MonoBehaviour
 {
     public const int ViewDistance = 200;
+    public static PlayerMovment Instance;
     private static GameObject Player;
     private static GameObject Water;
     private GameObject ViewPointCenter;
@@ -13,6 +14,10 @@ public class PlayerMovment : MonoBehaviour
     public static List<GameObject> ClosestInteractables;
     
     // Start is called before the first frame update
+    void Awake()
+    {
+        Instance = this;
+    }
     void Start()
     {
         Player = new GameObject();
@@ -21,9 +26,6 @@ public class PlayerMovment : MonoBehaviour
         Player.transform.position = new Vector3(TileManager.MapSize/2, 50, TileManager.MapSize/2);
         Player.transform.Rotate(0,45f,0);
 
-
-        return;
-        StartCoroutine(UpdateLoadedTiles());
     }
 
     // Update is called once per frame
@@ -84,14 +86,14 @@ public class PlayerMovment : MonoBehaviour
         //Water.transform.position = new Vector3(pos.x, 0, pos.z);
     }
     
-    IEnumerator UpdateLoadedTiles()
+    /*IEnumerator UpdateLoadedTiles()
     {
         while (true)
         {
             yield return new WaitForSeconds(1);
             TileManagerObject.GetComponent<TileManager>().UpdateLoadedTiles(new Vector2(ViewPointCenter.transform.position[0],ViewPointCenter.transform.position[2]), ViewDistance);
         }
-    }
+    }*/
 
     public static Vector3 getPlayerPos()
     {
@@ -127,8 +129,15 @@ public class PlayerMovment : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            //RailPlacer.HandlePlacementInput(hit.point); // Now static
+            RailPlacer.TogglePlacementSequence(hit.point); // Now static
         }
 
-}
+    }
+
+    public RaycastHit GetMousePositionInWorld()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(ray, out RaycastHit hit);
+        return hit;
+    }
 }
