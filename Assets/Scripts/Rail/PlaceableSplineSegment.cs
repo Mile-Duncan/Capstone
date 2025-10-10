@@ -4,7 +4,7 @@ using UnityEngine.Splines;
 
 public class PlaceableSplineSegment
 {
-    private const float ControlPointPrecent = 0.66666666f;
+    private const float ControlPointPrecent = 1f;
     public Spline PlaceableSpline { get; private set; }
     public BezierKnot AEnd{ get; private set; }
     public BezierKnot BEnd{ get; private set; }
@@ -25,9 +25,10 @@ public class PlaceableSplineSegment
         PlaceableSpline.Add(AEnd);
         PlaceableSpline.Add(BEnd);
     }
-    public void Modify(float3? Knot1Position, float3? Knot2Position, Vector3? ControlPoint)
+    
+    public void Modify(float3? Knot1Position, float3? Knot2Position, float3? ControlPoint)
     {
-        ControlPoint ??= this.ControlPoint;
+        if (ControlPoint != null) this.ControlPoint = ControlPoint.Value;
         Knot1Position ??= AEnd.Position;
         Knot2Position ??= BEnd.Position;
         
@@ -38,20 +39,18 @@ public class PlaceableSplineSegment
         float3 controlPoint1 = GetControlPoint(controlPoint, knot1Pos);
         float3 controlPoint2 = GetControlPoint(controlPoint, knot2Pos);
 
+        Vector3 AEndFacePoint = (this.ControlPoint - knot1Pos);
         
-        AEnd = new BezierKnot(knot1Pos, controlPoint1, 0);
+        AEnd = new BezierKnot(knot1Pos, controlPoint1, 0,rotation:Quaternion.LookRotation(AEndFacePoint));
         BEnd = new BezierKnot(knot2Pos, controlPoint2, 0);
         PlaceableSpline[0] = AEnd;
         PlaceableSpline[1] = BEnd;
-        MonoBehaviour.print(BEnd.Position);
     }
 
     private float3 GetControlPoint(float3 controlPoint, float3 knot)
     {
-        float distance = Vector3.Distance(knot, controlPoint);//get distance
         controlPoint -= knot; //get relative cords
         controlPoint *= ControlPointPrecent; //scale
-        //controlPoint += knot; //move back
         return controlPoint; //fuck ya
     }
 

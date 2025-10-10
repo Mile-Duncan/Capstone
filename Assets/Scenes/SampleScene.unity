@@ -119,208 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &208069787
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 208069789}
-  - component: {fileID: 208069788}
-  - component: {fileID: 208069792}
-  - component: {fileID: 208069791}
-  - component: {fileID: 208069790}
-  m_Layer: 0
-  m_Name: Spline
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &208069788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 208069787}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dab5c7d4c32e743048dfca98e2d5914f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Splines::UnityEngine.Splines.SplineContainer
-  m_Spline:
-    m_EditModeType: 1
-    m_Knots: []
-    m_MetaData: []
-    m_Closed: 0
-    m_IntData:
-      m_Data: []
-    m_FloatData:
-      m_Data: []
-    m_Float4Data:
-      m_Data: []
-    m_ObjectData:
-      m_Data: []
-  m_Splines:
-  - m_EditModeType: 1
-    m_Knots:
-    - Position:
-        x: 7.803894
-        y: -8.641
-        z: 0.26516724
-      TangentIn:
-        x: 0
-        y: 0
-        z: -4.3860846
-      TangentOut:
-        x: 0
-        y: 0
-        z: 2.8607352
-      Rotation:
-        value:
-          x: 0
-          y: 0.3320695
-          z: 0
-          w: 0.94325495
-    - Position:
-        x: 13.976013
-        y: -8.641
-        z: 0.71499634
-      TangentIn:
-        x: 0
-        y: 0
-        z: -2.828568
-      TangentOut:
-        x: 0
-        y: 0
-        z: 0.618849
-      Rotation:
-        value:
-          x: 0.0000000026425566
-          y: 0.9257832
-          z: 0.00000000107912
-          w: 0.3780549
-    m_MetaData:
-    - Mode: 3
-      Tension: 0.5
-    - Mode: 3
-      Tension: 0.5
-    m_Closed: 0
-    m_IntData:
-      m_Data: []
-    m_FloatData:
-      m_Data: []
-    m_Float4Data:
-      m_Data: []
-    m_ObjectData:
-      m_Data: []
-  m_Knots:
-    m_KnotsLink: []
---- !u!4 &208069789
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 208069787}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 627.034, y: 8.641, z: 411.995}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &208069790
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 208069787}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 222dc08d484f16869bdd89edd9d368fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Splines::UnityEngine.Splines.SplineExtrude
-  m_Container: {fileID: 208069788}
-  m_TargetMesh: {fileID: 0}
-  m_RebuildOnSplineChange: 1
-  m_RebuildFrequency: 30
-  m_UpdateColliders: 1
-  m_Sides: 8
-  m_SegmentsPerUnit: 6.26
-  m_Capped: 1
-  m_Radius: 1.53
-  m_Range: {x: 0, y: 0.99999994}
-  m_FlipNormals: 0
-  m_Shape:
-    rid: 705217513656680515
-  references:
-    version: 2
-    RefIds:
-    - rid: 705217513656680515
-      type: {class: Road, ns: UnityEngine.Splines.ExtrusionShapes, asm: Unity.Splines}
-      data: 
---- !u!23 &208069791
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 208069787}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 371d3aa2f54580741a25c83a947260dc, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &208069792
-MeshFilter:
-  m_ObjectHideFlags: 8
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 208069787}
-  m_Mesh: {fileID: 0}
 --- !u!1 &631979123
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,6 +361,7 @@ MonoBehaviour:
   - Stone
   - Water
   - Dirt
+  - Gravel
   NameMaterials:
   - {fileID: 2100000, guid: 785f3de036efef84f8ce563e72a8f401, type: 2}
   - {fileID: 2100000, guid: 29ecf132132857a4991674fe801b5d59, type: 2}
@@ -573,6 +372,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 83628b7e3a163c945b03e78565491ca3, type: 2}
   - {fileID: 2100000, guid: 371d3aa2f54580741a25c83a947260dc, type: 2}
   - {fileID: 2100000, guid: b105d187bd2258a46995c1fd19af7bb6, type: 2}
+  - {fileID: 2100000, guid: 73a066c000b06a74da200ff038f914f0, type: 2}
 --- !u!4 &819470298
 Transform:
   m_ObjectHideFlags: 0
@@ -814,7 +614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29a074d529cf945029ef7cf40540c9df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Splines::UnityEngine.Splines.SplineAnimate
-  m_Target: {fileID: 208069788}
+  m_Target: {fileID: 0}
   m_PlayOnAwake: 1
   m_LoopMode: 1
   m_Method: 1
@@ -871,7 +671,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 73a066c000b06a74da200ff038f914f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -914,8 +714,40 @@ Transform:
   m_LocalPosition: {x: 634.8379, y: 0, z: 412.26016}
   m_LocalScale: {x: -0.29, y: -0.29, z: -0.29}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 1262903893}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1262903892
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1262903893}
+  m_Layer: 0
+  m_Name: gravel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1262903893
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262903892}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.33206946, z: -0, w: 0.94325495}
+  m_LocalPosition: {x: 815.7559, y: 0, z: 2479.4338}
+  m_LocalScale: {x: -3.4482758, y: -3.4482758, z: -3.4482758}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 972040290}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1610171274
 GameObject:
@@ -963,7 +795,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26e37a4e684a4814fbbeb790e4b704c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  publicSeed: 69
+  publicSeed: 4
 --- !u!114 &1610171278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1088,5 +920,4 @@ SceneRoots:
   - {fileID: 1610171276}
   - {fileID: 819470298}
   - {fileID: 891570546}
-  - {fileID: 208069789}
   - {fileID: 972040290}

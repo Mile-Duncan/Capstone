@@ -23,6 +23,7 @@ public class PlayerMovment : MonoBehaviour
         Player = new GameObject();
         ViewPointCenter = new GameObject("ViewPointCenter");
         Player.name = "Player";
+        Player.tag = "Player";
         Player.transform.position = new Vector3(TileManager.MapSize/2, 50, TileManager.MapSize/2);
         Player.transform.Rotate(0,45f,0);
 
@@ -31,6 +32,10 @@ public class PlayerMovment : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Player == null)
+        {
+            Player = GameObject.FindWithTag("Player");
+        }
         int MoveX = 0;
         int MoveY = 0;
         int MoveZ = 0;

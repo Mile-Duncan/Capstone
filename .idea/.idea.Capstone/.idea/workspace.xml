@@ -5,17 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34e5280a-b1b2-4f79-97e6-262d602aef4b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/PlaceableSplineSegment.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/SplineMeshExtrude.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/SplineUtil.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Capstone/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Capstone/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ObjectData.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ObjectData.cs.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Genoration/Tile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Genoration/Tile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Genoration/TileDecorator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Genoration/TileDecorator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Genoration/WaitForJobCompletion.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Genoration/WaitForJobCompletion.cs.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerMovment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerMovment.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/RailNetwork.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/RailNetwork.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/PlaceableSplineSegment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/PlaceableSplineSegment.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/RailPlacer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/RailPlacer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/RailSegment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/RailSegment.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Resorces.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Resorces.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/log.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/log.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,9 +34,14 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6460d52f11fa4eaeabfca1cf2e9eca8f46ae00/22/0b1caeed/ThrowHelper.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9b2ca2197f604d0fab04dc1c0e8b15011f5a00/04/aa6871b3/Quaternion.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/ExternalSorces.txt" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Rail/PlaceableSplineSegment.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Rail/RailNetwork.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Rail/RailPlacer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Rail/SplineMeshExtrude.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Rail/SplineUtil.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.mathematics@8017b507cc74/Unity.Mathematics/float3.gen.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.splines@1cb7d86fc7ff/Editor/Components/SplineExtrudeEditor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.splines@1cb7d86fc7ff/Editor/Utilities/SplineExtrudeUtility.cs" root0="SKIP_HIGHLIGHTING" />
@@ -64,7 +74,7 @@
 }</component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Standalone Player" type="RunUnityExe" factoryName="Unity Executable">
-      <option name="EXE_PATH" value="$USER_HOME$/UnityBuilds/procedural gen practice.exe" />
+      <option name="EXE_PATH" value="$PROJECT_DIR$/builds\procedural gen practice.exe" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="C:\Users\miles\UnityBuilds" />
       <option name="PASS_PARENT_ENVS" value="1" />
@@ -97,10 +107,10 @@
       </option>
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="2520">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="9276">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" value="2520" />
+      <option name="pid" value="9276" />
       <option name="projectPathOnTarget" />
       <option name="selectedOptions">
         <list />
@@ -123,6 +133,8 @@
       <workItem from="1759279693135" duration="934000" />
       <workItem from="1759352509932" duration="7795000" />
       <workItem from="1759445385498" duration="23161000" />
+      <workItem from="1759782985341" duration="52000" />
+      <workItem from="1759783057021" duration="40063000" />
     </task>
     <servers />
   </component>
@@ -138,5 +150,37 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="Both" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Rail/RailPlacer.cs</url>
+          <line>40</line>
+          <properties documentPath="C:\Users\miles\Documents\GitHub\Capstone\Assets\Scripts\Rail\RailPlacer.cs" containingFunctionPresentation="Method 'GetTrackPlacementPosition'">
+            <startOffsets>
+              <option value="1502" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1561" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Rail/SplineUtil.cs</url>
+          <line>114</line>
+          <properties documentPath="C:\Users\miles\Documents\GitHub\Capstone\Assets\Scripts\Rail\SplineUtil.cs" containingFunctionPresentation="Method 'SampleSplineInterval'">
+            <startOffsets>
+              <option value="4649" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4661" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

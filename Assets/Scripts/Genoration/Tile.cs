@@ -1,373 +1,282 @@
 using System;
-
 using System.Collections.Generic;
-
 using Unity.Jobs;
-
 using Unity.VisualScripting;
-
 using UnityEngine;
-
-
 
 public class Tile
 
 {
+    private const float GeneralVerticalNoiseMultiplyer = 2.3f;
 
-private const float GeneralVerticalNoiseMultiplyer = 2.3f;
+    private const float GeneralNoiseStreach = .2f;
 
-private const float GeneralNoiseStreach = .2f;
+    private const float GeneralContinentialnessMultiplyer = 50f;
 
-private const float GeneralContinentialnessMultiplyer = 50f;
+    private const float GeneralContinentialHeightMultiplyer = 5f;
 
-private const float GeneralContinentialHeightMultiplyer = 5f;
+    private const float GeneralMountainRarity = 4f;
 
-private const float GeneralMountainRarity = 4f;
+    private const float GeneralMountainJagadness = 2.3f;
 
-private const float GeneralMountainJagadness = 2.3f;
+    private const float GeneralMountainSteepness = 4f;
 
-private const float GeneralMountainSteepness = 4f;
+    private const float MountainVerticalNoiseMultiplyer = 10f;
 
-private const float MountainVerticalNoiseMultiplyer = 10f;
+    private const float EdgeSmothing = 30;
 
-private const float EdgeSmothing = 30;
+    private const float RiverSize = 1.6f;
 
-private const float RiverSize = 1.6f;
+    private const float RemoveMeshBelow = -2f;
 
-private const float RemoveMeshBelow = -2f;
+    public int DetailSize;
 
+    public int MeshSize;
 
+    private int Detail;
 
-public int DetailSize;
+    private Mesh mesh;
 
-public int MeshSize;
+    private GameObject gameObject;
 
-private int Detail;
+    public GameObject NewTile(int i, int j, int ms, int detail)
 
-private Mesh mesh;
+    {
+        DetailSize = ms / detail;
 
-private GameObject gameObject;
+        Detail = detail;
 
+        MeshSize = ms;
 
+        if (!CreateMesh(i, j)) return null;
 
-public GameObject NewTile(int i, int j, int ms, int detail)
+        gameObject = new GameObject("Tile", typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider),
+            typeof(LODGroup));
 
-{
+        gameObject.GetComponent<MeshFilter>().mesh = mesh;
 
-DetailSize = ms/detail;
+        gameObject.transform.Translate(i, 0, j);
 
-Detail = detail;
+        gameObject.GetComponent<MeshCollider>().enabled = true;
 
-MeshSize = ms;
+        gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
 
+        GameObject ConnectedObjects = new GameObject("Connected Objects", typeof(ObjectData));
 
-if(!CreateMesh(i,j)) return null;
+        GameObject Genorated = new GameObject("Genorated", typeof(ObjectData));
 
+        ConnectedObjects.transform.position = gameObject.transform.position;
 
-gameObject = new GameObject("Tile", typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider), typeof(LODGroup));
+        Genorated.transform.position = gameObject.transform.position;
 
-gameObject.GetComponent<MeshFilter>().mesh = mesh;
+        ConnectedObjects.GetComponent<ObjectData>().setInteractable(true);
 
-gameObject.transform.Translate(i, 0, j);
+        Genorated.GetComponent<ObjectData>().setInteractable(true);
 
-gameObject.GetComponent<MeshCollider>().enabled = true;
+        ConnectedObjects.transform.parent = gameObject.transform;
 
-gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+        Genorated.transform.parent = gameObject.transform;
 
+        TileDecorator decorator = new TileDecorator(gameObject, MeshSize, Detail);
 
+        gameObject = decorator.Decorate();
 
-GameObject ConnectedObjects = new GameObject("Connected Objects", typeof(ObjectData));
+        gameObject.transform.SetParent(TileManager.TileGrid.transform);
 
-GameObject Genorated = new GameObject("Genorated", typeof(ObjectData));
+        return gameObject;
+    }
 
+    private bool CreateMesh(int i, int j)
 
+    {
+        mesh = new Mesh();
 
-ConnectedObjects.transform.position = gameObject.transform.position;
+        mesh.Clear();
 
-Genorated.transform.position = gameObject.transform.position;
+        Vector3[] vertices = new Vector3[(DetailSize + 1) * (DetailSize + 1)];
 
+        float highestVisibleVertice = RemoveMeshBelow;
 
-ConnectedObjects.GetComponent<ObjectData>().setInteractable(true);
+        for (int x = 0, w = 0; x <= DetailSize * Detail; x += Detail)
+        for (int z = 0; z <= DetailSize * Detail; z += Detail)
 
-Genorated.GetComponent<ObjectData>().setInteractable(true);
+        {
+            double perlinXValue = (x + i) * GeneralNoiseStreach + TileManager.PerlinOffsetX;
 
+            double perlinYValue = (z + j) * GeneralNoiseStreach + TileManager.PerlinOffsetZ;
 
-ConnectedObjects.transform.parent = gameObject.transform;
+            vertices[w] = new Vector3(x, (float)CalculateNoise((x + i), (z + j), perlinXValue, perlinYValue), z);
 
-Genorated.transform.parent = gameObject.transform;
+            if (vertices[w].y > highestVisibleVertice) highestVisibleVertice = vertices[w].y;
 
+            w++;
+        }
 
+        if (highestVisibleVertice <= RemoveMeshBelow)
 
+        {
+            MonoBehaviour.Destroy(gameObject);
 
-TileDecorator decorator = new TileDecorator(gameObject, MeshSize, Detail);
+            return false;
+        }
 
+        mesh.vertices = vertices;
 
+        int[] triangles = new int[3];
 
-gameObject = decorator.Decorate();
+        int vert = 0;
 
+        int tris = 0;
 
+        mesh.subMeshCount = DetailSize * DetailSize * 2;
 
+        for (int z = 0; z < DetailSize; z++)
 
-gameObject.transform.SetParent(TileManager.TileGrid.transform);
+        {
+            for (int x = 0; x < DetailSize; x++)
 
+            {
+                if ((z + x) % 2 == 0)
 
-return gameObject;
+                {
+                    triangles[2] = vert + 0;
 
-}
+                    triangles[1] = vert + DetailSize + 1;
 
+                    triangles[0] = vert + 1;
 
+                    mesh.SetTriangles(triangles, tris);
 
-private bool CreateMesh(int i, int j)
+                    tris++;
 
-{
+                    triangles[2] = vert + 1;
 
-mesh = new Mesh();
+                    triangles[1] = vert + DetailSize + 1;
 
-mesh.Clear();
+                    triangles[0] = vert + DetailSize + 2;
 
+                    mesh.SetTriangles(triangles, tris);
+                }
 
+                else
 
-Vector3[] vertices = new Vector3[(DetailSize+1)*(DetailSize+1)];
+                {
+                    triangles[2] = vert + 0;
 
-float highestVisibleVertice = RemoveMeshBelow;
+                    triangles[1] = vert + DetailSize + 1;
 
-for (int x = 0, w = 0; x <= DetailSize*Detail; x+=Detail)for(int z = 0; z <= DetailSize*Detail; z+=Detail)
+                    triangles[0] = vert + DetailSize + 2;
 
-{
+                    mesh.SetTriangles(triangles, tris);
 
+                    tris++;
 
+                    triangles[0] = vert + 0;
 
-double perlinXValue = (x + i) * GeneralNoiseStreach + TileManager.PerlinOffsetX;
+                    triangles[1] = vert + 1;
 
-double perlinYValue = (z + j) * GeneralNoiseStreach + TileManager.PerlinOffsetZ;
+                    triangles[2] = vert + DetailSize + 2;
 
+                    mesh.SetTriangles(triangles, tris);
+                }
 
+                vert++;
 
-vertices[w] = new Vector3(x,(float)CalculateNoise((x + i),(z + j),perlinXValue, perlinYValue),z);
+                tris++;
+            }
 
-if (vertices[w].y > highestVisibleVertice) highestVisibleVertice = vertices[w].y;
+            vert++;
+        }
 
-w++;
+        return true;
+    }
 
-}
+    private double CalculateNoise(int trueX, int trueY, double perlinXValue, double perlinYValue)
 
+    {
+        float GenericVeriticalNoise = CalculateBumpyness(perlinXValue, perlinYValue) / 2;
 
+        float GenericTerrainHeight = CalculateTerrainHeight(perlinXValue, perlinYValue);
 
-if (highestVisibleVertice <= RemoveMeshBelow)
+        float noise = Math.Abs(GenericTerrainHeight + GenericVeriticalNoise) - RiverSize;
 
-{
+        return SoftenEdge(new Vector2(trueX, trueY), noise);
+    }
 
-MonoBehaviour.DestroyImmediate(gameObject);
+    private static double SoftenEdge(Vector2 tilePos, double noise)
 
-return false;
+    {
+        float dist = Vector2.Distance(tilePos, new Vector2(TileManager.MapSize / 2f, TileManager.MapSize / 2f));
 
-}
+        float amount = ((TileManager.MapSize / 2f) - EdgeSmothing * 5);
 
+        if (dist > amount)
 
-mesh.vertices = vertices;
-
-
-
-int[] triangles = new int[3];
-
-
-int vert = 0;
-
-int tris = 0;
-
-mesh.subMeshCount = DetailSize*DetailSize*2;
-
-for (int z = 0; z < DetailSize; z++)
-
-{
-
-for (int x = 0; x < DetailSize; x++)
-
-{
-
-if ((z + x) % 2 == 0)
-
-{
-
-triangles[2] = vert + 0;
-
-triangles[1] = vert + DetailSize + 1;
-
-triangles[0] = vert + 1;
-
-mesh.SetTriangles(triangles, tris);
-
-tris++;
-
-triangles[2] = vert + 1;
-
-triangles[1] = vert + DetailSize + 1;
-
-triangles[0] = vert + DetailSize + 2;
-
-mesh.SetTriangles(triangles, tris);
-
-}
-
-else
-
-{
-
-triangles[2] = vert + 0;
-
-triangles[1] = vert + DetailSize + 1;
-
-triangles[0] = vert + DetailSize + 2;
-
-mesh.SetTriangles(triangles, tris);
-
-tris++;
-
-triangles[0] = vert + 0;
-
-triangles[1] = vert + 1;
-
-triangles[2] = vert + DetailSize + 2;
-
-mesh.SetTriangles(triangles, tris);
-
-}
-
-
-
-vert++;
-
-tris++;
-
-}
-
-vert++;
-
-}
-
-
-
-return true;
-
-}
-
-
-
-private double CalculateNoise(int trueX, int trueY, double perlinXValue, double perlinYValue)
-
-{
-
-float GenericVeriticalNoise = CalculateBumpyness(perlinXValue, perlinYValue)/2;
-
-
-
-float GenericTerrainHeight = CalculateTerrainHeight(perlinXValue, perlinYValue);
-
-
-
-float noise = Math.Abs(GenericTerrainHeight + GenericVeriticalNoise) - RiverSize;
-
-return SoftenEdge(new Vector2(trueX, trueY), noise);
-
-
-
-}
-
-
-private static double SoftenEdge(Vector2 tilePos, double noise)
-
-{
-
-float dist = Vector2.Distance(tilePos, new Vector2(TileManager.MapSize / 2f, TileManager.MapSize / 2f));
-
-float amount = ((TileManager.MapSize / 2f) - EdgeSmothing*5);
-
-if (dist > amount)
-
-{
-
-float subAmount = (Mathf.Pow((amount-dist)/EdgeSmothing,2));
+        {
+            float subAmount = (Mathf.Pow((amount - dist) / EdgeSmothing, 2));
 
 //if(subAmount < -EdgeSmothing) subAmount = -EdgeSmothing;
 
-noise -= subAmount;
+            noise -= subAmount;
 
-if(noise < -10) noise = -10;
+            if (noise < -10) noise = -10;
+        }
 
+        return noise;
+    }
 
+    private float CalculateBumpyness(double perlinXValue, double perlinYValue)
 
-}
+    {
+        return Mathf.PerlinNoise((float)perlinXValue, (float)perlinYValue) * GeneralVerticalNoiseMultiplyer;
+    }
 
-return noise;
+    private float CalculateTerrainHeight(double perlinXValue, double perlinYValue)
 
-}
+    {
+        float GenericTerrainHeight =
+            Mathf.PerlinNoise((float)(perlinXValue / GeneralContinentialnessMultiplyer),
+                (float)(perlinYValue / GeneralContinentialnessMultiplyer)) * GeneralVerticalNoiseMultiplyer;
 
+        GenericTerrainHeight = GenericTerrainHeight * 2 - 1.5f;
 
+        GenericTerrainHeight = (float)Math.Pow(Math.Abs(GenericTerrainHeight), 1.0 / 1.5) *
+            Math.Abs(GenericTerrainHeight) / GenericTerrainHeight;
 
-private float CalculateBumpyness(double perlinXValue, double perlinYValue)
+        GenericTerrainHeight *= GeneralContinentialHeightMultiplyer;
 
-{
+        GenericTerrainHeight = CalculateMountains(perlinXValue, perlinYValue, GenericTerrainHeight);
 
-return Mathf.PerlinNoise((float)perlinXValue, (float)perlinYValue) * GeneralVerticalNoiseMultiplyer;
+        return GenericTerrainHeight;
+    }
 
-}
+    private float CalculateMountains(double perlinXValue, double perlinYValue, float GenericTerrainHeight)
 
-private float CalculateTerrainHeight(double perlinXValue, double perlinYValue)
+    {
+        float MountainNoise = Mathf.PerlinNoise((float)perlinXValue / (10 - GeneralMountainJagadness),
+            (float)perlinYValue / (10 - GeneralMountainJagadness));
 
-{
+        MountainNoise = GeneralVerticalNoiseMultiplyer * MountainNoise - 1;
 
-float GenericTerrainHeight = Mathf.PerlinNoise((float)(perlinXValue/GeneralContinentialnessMultiplyer), (float)(perlinYValue/GeneralContinentialnessMultiplyer)) * GeneralVerticalNoiseMultiplyer;
+        float MountainPeak =
+            (float)Math.Pow(
+                Math.Sqrt(Math.Abs(GeneralMountainRarity -
+                                   Math.Abs(GenericTerrainHeight - (GeneralMountainJagadness * MountainNoise)))),
+                GeneralMountainSteepness);
 
+        if (!(MountainPeak > 0)) MountainPeak = 0;
 
+        if (MountainNoise + (GenericTerrainHeight * GeneralVerticalNoiseMultiplyer) >=
+            GeneralVerticalNoiseMultiplyer * GeneralMountainRarity)
 
-GenericTerrainHeight = GenericTerrainHeight * 2 - 1.5f;
+        {
+            GenericTerrainHeight += MountainPeak + (MountainNoise * GeneralMountainJagadness) - MountainNoise;
 
+            GenericTerrainHeight +=
+                (CalculateBumpyness(perlinXValue, perlinYValue) * GenericTerrainHeight * GeneralMountainJagadness) /
+                100 * MountainVerticalNoiseMultiplyer - CalculateBumpyness(perlinXValue, perlinYValue);
+        }
 
-GenericTerrainHeight = (float)Math.Pow(Math.Abs(GenericTerrainHeight),1.0/1.5)*Math.Abs(GenericTerrainHeight)/GenericTerrainHeight;
-
-
-GenericTerrainHeight *= GeneralContinentialHeightMultiplyer;
-
-
-
-GenericTerrainHeight = CalculateMountains(perlinXValue, perlinYValue, GenericTerrainHeight);
-
-return GenericTerrainHeight;
-
-}
-
-
-
-private float CalculateMountains(double perlinXValue, double perlinYValue, float GenericTerrainHeight)
-
-{
-
-float MountainNoise = Mathf.PerlinNoise((float)perlinXValue/(10-GeneralMountainJagadness), (float)perlinYValue/(10-GeneralMountainJagadness));
-
-MountainNoise = GeneralVerticalNoiseMultiplyer * MountainNoise - 1;
-
-
-
-float MountainPeak = (float)Math.Pow(Math.Sqrt(Math.Abs(GeneralMountainRarity-Math.Abs(GenericTerrainHeight-(GeneralMountainJagadness*MountainNoise)))), GeneralMountainSteepness);
-
-if (!(MountainPeak > 0)) MountainPeak = 0;
-
-
-
-if (MountainNoise + (GenericTerrainHeight * GeneralVerticalNoiseMultiplyer) >=
-
-GeneralVerticalNoiseMultiplyer * GeneralMountainRarity)
-
-{
-
-GenericTerrainHeight += MountainPeak + (MountainNoise * GeneralMountainJagadness) - MountainNoise;
-
-GenericTerrainHeight += (CalculateBumpyness(perlinXValue, perlinYValue)*GenericTerrainHeight*GeneralMountainJagadness)/100*MountainVerticalNoiseMultiplyer-CalculateBumpyness(perlinXValue, perlinYValue);
-
-}
-
-return GenericTerrainHeight;
-
-}
-
+        return GenericTerrainHeight;
+    }
 }
