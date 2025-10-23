@@ -128,9 +128,6 @@ public class PlayerMovment : MonoBehaviour
 
     private void Place()
     {
-
-        print("click");
-
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {

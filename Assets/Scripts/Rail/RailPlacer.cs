@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-// Removed unused 'UnityEditor.PackageManager'
+
 using UnityEngine;
 using UnityEngine.Splines;
-using Unity.Mathematics; // Used for float3 and distances
+using Unity.Mathematics;
 
 public static class RailPlacer
 {
@@ -27,25 +27,58 @@ public static class RailPlacer
             if (segment == _placingRailSegment) continue;
             if (Vector3.Distance(segment.SplineSegment.GetKnots()[0], originalPlacePosition) <= SnapRange)
             {
+                Vector3 clickPosition = segment.SplineSegment.GetKnots()[0];
                 if (firstClick)
                 {
                     _currentAnchorTangent = segment.SplineSegment.ControlPoint;
-                    _placingRailSegment.connections.Add(segment);
+                    _placingRailSegment.SplineSegment = new PlaceableSplineSegment(clickPosition, clickPosition, _controlPointPosition);
                 }
-                return segment.SplineSegment.GetKnots()[0];
+                ConectSegment(segment);
+
+                return clickPosition;
             };
             if (Vector3.Distance(segment.SplineSegment.GetKnots()[1], originalPlacePosition) <= SnapRange)
             {
+                Vector3 clickPosition = segment.SplineSegment.GetKnots()[1];
                 if (firstClick)
                 {
                     _currentAnchorTangent = segment.SplineSegment.ControlPoint;
-                    _placingRailSegment.connections.Add(segment);
+                    _placingRailSegment.SplineSegment = new PlaceableSplineSegment(clickPosition, clickPosition, _controlPointPosition);
                 }
-                return segment.SplineSegment.GetKnots()[1];
+                ConectSegment(segment);
+
+                return clickPosition;
             };
         }
-        if(firstClick)_currentAnchorTangent = new Vector3(originalPlacePosition.x, originalPlacePosition.y, originalPlacePosition.z);
+
+        if (firstClick)
+        {
+            _currentAnchorTangent = new Vector3(originalPlacePosition.x, originalPlacePosition.y, originalPlacePosition.z);
+            _placingRailSegment.SplineSegment = new PlaceableSplineSegment(originalPlacePosition, originalPlacePosition, _controlPointPosition);
+        }
+        
         return originalPlacePosition;
+    }
+
+    private static void ConectSegment(RailSegment segment)
+    {
+        if (segment.SplineSegment.AEnd.Position.Equals(_placingRailSegment.SplineSegment.AEnd.Position))
+        {
+            _placingRailSegment.connections[0] = segment;
+            segment.connections[0] = _placingRailSegment;
+        }else if (segment.SplineSegment.AEnd.Position.Equals(_placingRailSegment.SplineSegment.BEnd.Position))
+        {
+            _placingRailSegment.connections[1] = segment;
+            segment.connections[0] = _placingRailSegment;
+        }else if (segment.SplineSegment.BEnd.Position.Equals(_placingRailSegment.SplineSegment.AEnd.Position))
+        {
+            _placingRailSegment.connections[0] = segment;
+            segment.connections[1] = _placingRailSegment;
+        }else if (segment.SplineSegment.BEnd.Position.Equals(_placingRailSegment.SplineSegment.BEnd.Position))
+        {
+            _placingRailSegment.connections[1] = segment;
+            segment.connections[1] = _placingRailSegment;
+        }
     }
 
     public static void TogglePlacementSequence(Vector3 clickPosition)
@@ -57,7 +90,7 @@ public static class RailPlacer
             
             _placingRailSegment.splineMeshRenderer.material.SetColor("_Color", Color.white);
             
-            clickPosition = GetTrackPlacementPosition(clickPosition, true);
+            clickPosition = GetTrackPlacementPosition(clickPosition);
 
             _active = false;
             if (_firstPosition == _controlPointPosition || clickPosition == _controlPointPosition) _controlPointPosition = (clickPosition + _firstPosition) / 2f;
@@ -76,7 +109,6 @@ public static class RailPlacer
         
         SetControlPointPosition(clickPosition,clickPosition);
 
-        _placingRailSegment.SplineSegment = new PlaceableSplineSegment(clickPosition, clickPosition, _controlPointPosition);
         _placingRailSegment.segmentType = RailSegment.SegmentType.Holographic;
         
         _placingRailSegment.StartCoroutine(UpdatePlaceingRailSegment());
@@ -100,6 +132,7 @@ public static class RailPlacer
     private static void SetControlPointPosition(Vector3 mousePosition, Vector3 anchorPosition)
     {
         TryFindEquidistantPoint(_currentAnchorTangent, mousePosition, anchorPosition, out _controlPointPosition);
+        _controlPointPosition.y = (_controlPointPosition.y+mousePosition.y)/2;
     }
     
     

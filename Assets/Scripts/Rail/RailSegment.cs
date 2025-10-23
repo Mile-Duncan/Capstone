@@ -19,20 +19,17 @@ public class RailSegment : MonoBehaviour
     }
 
     public PlaceableSplineSegment SplineSegment;
-    public List<RailSegment> connections;
+    public RailSegment[] connections = new RailSegment[2];
     public SegmentType segmentType;
-    [SerializeField] private SplineContainer splineContainer;
+    [SerializeField] public SplineContainer splineContainer { get; private set; }
     [SerializeField] public SplineMeshExtrude splineExtrude;
     [SerializeField] private MeshFilter splineMeshFilter;
     [SerializeField] public MeshRenderer splineMeshRenderer;
     
-    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        RailNetwork.Track.Add(this);
-
-        connections = new List<RailSegment>();
+        RailNetwork.RegisterNewTrack(this);
         
         splineContainer = gameObject.GetOrAddComponent<SplineContainer>();
         splineMeshFilter = gameObject.GetOrAddComponent<MeshFilter>();
