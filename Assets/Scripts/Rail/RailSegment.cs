@@ -9,13 +9,13 @@ public class RailSegment : MonoBehaviour
 {
     public enum SegmentType
     {
-        Fucked = -1,
+        Fucked = -100,
         Detached = 0,
         Buffer = 1,
         Standard = 2,
         Switch = 3,
         Crossover = 4,
-        Holographic = 100
+        Holographic = -1
     }
 
     public PlaceableSplineSegment SplineSegment;
@@ -42,9 +42,25 @@ public class RailSegment : MonoBehaviour
         splineContainer.Spline = SplineSegment.PlaceableSpline;
         splineExtrude.extrusionTemplateMesh = CreateRailMesh();
         splineExtrude.extrusionAxis = SplineMeshExtrude.Axis.Z;
-        splineExtrude.extrusionInterval = 0.1f;
+        splineExtrude.extrusionInterval = 1f;
         splineMeshRenderer.material = Resorces.Materials["Gravel"];
 
+    }
+
+    public SegmentType UpdateSegmentType()
+    {
+        byte cons = 0;
+        if(connections[0] != null) cons++;
+        if(connections[1] != null) cons++;
+        
+        if(cons == 0) segmentType = SegmentType.Detached;
+        else if(cons == 1) segmentType = SegmentType.Buffer;
+        else if(cons == 2) segmentType = SegmentType.Standard;
+        else if(cons == 3) segmentType = SegmentType.Switch;
+        else if(cons == 4) segmentType = SegmentType.Crossover;
+        else segmentType = SegmentType.Fucked;
+        
+        return segmentType;
     }
 
     private void OnDrawGizmosSelected()

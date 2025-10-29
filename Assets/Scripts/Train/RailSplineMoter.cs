@@ -36,6 +36,7 @@ public class RailSplineMoter : MonoBehaviour
 
     private void Move(float amount)
     {
+        if(currentSegment == null) return;
         amount += DistanceThoughCurrentSegment;
 
         while (amount < 0 || amount > currentSegment.splineContainer.CalculateLength())
@@ -65,7 +66,7 @@ public class RailSplineMoter : MonoBehaviour
                     Speed = -Speed;
                     amount = -amount;
                     currentSegment = currentSegment.connections[0];
-                    amount -= currentSegment.splineContainer.CalculateLength();
+                    //amount -= currentSegment.splineContainer.CalculateLength();
                 }
                 else
                 {
@@ -77,6 +78,8 @@ public class RailSplineMoter : MonoBehaviour
         }
 
         transform.position = currentSegment.splineContainer.EvaluatePosition(amount / currentSegment.splineContainer.CalculateLength());
+        if(Speed>0)transform.forward = currentSegment.splineContainer.EvaluateTangent(amount / currentSegment.splineContainer.CalculateLength());
+        else transform.forward = -currentSegment.splineContainer.EvaluateTangent(amount / currentSegment.splineContainer.CalculateLength());
         DistanceThoughCurrentSegment = amount;
         
     }

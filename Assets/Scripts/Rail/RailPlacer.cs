@@ -26,7 +26,7 @@ public static class RailPlacer
         {
             if (segment == _placingRailSegment) continue;
             if (Vector3.Distance(segment.SplineSegment.GetKnots()[0], originalPlacePosition) <= SnapRange)
-            {
+            { 
                 Vector3 clickPosition = segment.SplineSegment.GetKnots()[0];
                 if (firstClick)
                 {
@@ -94,6 +94,7 @@ public static class RailPlacer
 
             _active = false;
             if (_firstPosition == _controlPointPosition || clickPosition == _controlPointPosition) _controlPointPosition = (clickPosition + _firstPosition) / 2f;
+            _placingRailSegment.UpdateSegmentType();
             _placingRailSegment = null;
             return;
         }
