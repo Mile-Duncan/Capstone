@@ -33,7 +33,7 @@ public static class RailPlacer
                     _currentAnchorTangent = segment.SplineSegment.ControlPoint;
                     _placingRailSegment.SplineSegment = new PlaceableSplineSegment(clickPosition, clickPosition, _controlPointPosition);
                 }
-                ConectSegment(segment);
+                //RailSegment.ConectSegments(segment,_placingRailSegment);
 
                 return clickPosition;
             };
@@ -45,7 +45,7 @@ public static class RailPlacer
                     _currentAnchorTangent = segment.SplineSegment.ControlPoint;
                     _placingRailSegment.SplineSegment = new PlaceableSplineSegment(clickPosition, clickPosition, _controlPointPosition);
                 }
-                ConectSegment(segment);
+                //RailSegment.ConectSegments(segment,_placingRailSegment);
 
                 return clickPosition;
             };
@@ -60,26 +60,7 @@ public static class RailPlacer
         return originalPlacePosition;
     }
 
-    private static void ConectSegment(RailSegment segment)
-    {
-        if (segment.SplineSegment.AEnd.Position.Equals(_placingRailSegment.SplineSegment.AEnd.Position))
-        {
-            _placingRailSegment.connections[0] = segment;
-            segment.connections[0] = _placingRailSegment;
-        }else if (segment.SplineSegment.AEnd.Position.Equals(_placingRailSegment.SplineSegment.BEnd.Position))
-        {
-            _placingRailSegment.connections[1] = segment;
-            segment.connections[0] = _placingRailSegment;
-        }else if (segment.SplineSegment.BEnd.Position.Equals(_placingRailSegment.SplineSegment.AEnd.Position))
-        {
-            _placingRailSegment.connections[0] = segment;
-            segment.connections[1] = _placingRailSegment;
-        }else if (segment.SplineSegment.BEnd.Position.Equals(_placingRailSegment.SplineSegment.BEnd.Position))
-        {
-            _placingRailSegment.connections[1] = segment;
-            segment.connections[1] = _placingRailSegment;
-        }
-    }
+    
 
     public static void TogglePlacementSequence(Vector3 clickPosition)
     {
@@ -94,7 +75,8 @@ public static class RailPlacer
 
             _active = false;
             if (_firstPosition == _controlPointPosition || clickPosition == _controlPointPosition) _controlPointPosition = (clickPosition + _firstPosition) / 2f;
-            _placingRailSegment.UpdateSegmentType();
+            _placingRailSegment.SetConnections();
+            _placingRailSegment.trackUpdateEvent.Invoke();
             _placingRailSegment = null;
             return;
         }
@@ -134,6 +116,14 @@ public static class RailPlacer
     {
         TryFindEquidistantPoint(_currentAnchorTangent, mousePosition, anchorPosition, out _controlPointPosition);
         _controlPointPosition.y = (_controlPointPosition.y+mousePosition.y)/2;
+    }
+
+    public static void CancelPlacement()
+    {
+        _active = false;
+        if(_placingRailSegment==null)return;
+        RailNetwork.Track.Remove(_placingRailSegment);
+        MonoBehaviour.Destroy(_placingRailSegment.gameObject);
     }
     
     
@@ -180,6 +170,23 @@ public static class RailPlacer
         if (_placingRailSegment.SplineSegment.PlaceableSpline.GetLength() < MinLength || _placingRailSegment.SplineSegment.PlaceableSpline.GetLength() > MaxLength) return false;
         //if(Quaternion.Angle(_placingRailSegment.SplineSegment.AEnd.Rotation,_placingRailSegment.SplineSegment.BEnd.Rotation) > 90f) return false;
         return true;
+    }
+
+    public static bool RemoveRailSegmentAt(Vector3 clickPosition)
+    {
+        foreach (RailSegment segment in RailNetwork.Track)
+        {
+            if (segment == _placingRailSegment) continue;
+            float3 pos;
+            SplineUtility.GetNearestPoint(segment.SplineSegment.PlaceableSpline, clickPosition, out pos, out _);
+            if (Vector3.Distance(pos, clickPosition) <= SnapRange)
+            { 
+               MonoBehaviour.Destroy(segment.gameObject);
+               RailNetwork.Track.Remove(segment);
+               return true;
+            };
+        }
+        return false;
     }
 
 }

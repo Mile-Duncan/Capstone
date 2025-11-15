@@ -6,6 +6,8 @@ using UnityEngine.Splines;
 
 public class RailSplineFolower : MonoBehaviour
 {
+    public enum Direction { Positive = 1, Negative = -1, None = 0}
+    
     public RailSegment currentSegment;
     public float speed;
 
@@ -26,8 +28,13 @@ public class RailSplineFolower : MonoBehaviour
     {
         List<RailSegment> segmentsToCheck;
         if (currentSegment == null) segmentsToCheck = RailNetwork.Track;
-        else segmentsToCheck = new List<RailSegment>{currentSegment,currentSegment.connections[0],currentSegment.connections[1]};
+        else
+        {
+            segmentsToCheck = new List<RailSegment>{currentSegment,currentSegment.connections[0],currentSegment.connections[1]};
+            currentSegment.isOccupied = false;
+        }
 
+        
         float minDistance = float.MaxValue;
         float minAmount = 0;
         RailSegment minSegment = null;
@@ -50,8 +57,29 @@ public class RailSplineFolower : MonoBehaviour
         if (minDistance > 10000000) return;
 
         currentSegment = minSegment;
-        transform.position = currentSegment.splineContainer.EvaluatePosition(minAmount);
+        Vector3 currentVelocity = gameObject.GetComponent<Rigidbody>().linearVelocity;
         float3 tangent = currentSegment.splineContainer.EvaluateTangent(minAmount);
+
+        if (currentVelocity.sqrMagnitude < 0.001f)
+        {
+            currentSegment.direction = Direction.None;
+        }
+        else
+        {
+            float dotProduct = Vector3.Dot(currentVelocity.normalized, ((Vector3)tangent).normalized);
+
+            if (dotProduct > 0)
+            {
+                currentSegment.direction = Direction.Positive;
+            }
+            else
+            {
+                currentSegment.direction = Direction.Negative;
+            }
+        }
+
+        currentSegment.isOccupied = true;
+        transform.position = currentSegment.splineContainer.EvaluatePosition(minAmount);
         if(Vector3.Angle(transform.forward, tangent)<90) transform.forward = tangent;
         else transform.forward = -tangent;
 

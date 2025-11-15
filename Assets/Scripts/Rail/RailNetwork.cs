@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -15,7 +16,16 @@ public static class RailNetwork
         
     }
 
-    
+    public static List<RailSegment> GetSegmentsWithNodeAt(Vector3 position, RailSegment[] ignore = null)
+    {
+        List<RailSegment> segments = new List<RailSegment>();
+        foreach (RailSegment segment in RailNetwork.Track)
+        {
+            if (ignore != null && ignore.Contains(segment)) continue;
+            if(segment.SplineSegment.GetKnots().Contains(position))segments.Insert(0,segment);
+        }
+        return segments;
+    }
 
      
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerMovment : MonoBehaviour
 {
@@ -12,7 +13,11 @@ public class PlayerMovment : MonoBehaviour
     private GameObject ViewPointCenter;
     public GameObject TileManagerObject;
     public static List<GameObject> ClosestInteractables;
-    
+
+    public static UnityEvent UseEvent = new();
+    public static UnityEvent BreakEvent = new();
+
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -62,12 +67,13 @@ public class PlayerMovment : MonoBehaviour
         
         if (Input.GetMouseButtonDown(1))
         {
-            Break();
+            BreakEvent.Invoke();
+            print("b");
         }
         
         if (Input.GetMouseButtonDown(0))
         {
-            Place();
+            UseEvent.Invoke();
         }
         
         if (Input.GetKey(KeyCode.Escape))
@@ -104,37 +110,7 @@ public class PlayerMovment : MonoBehaviour
     {
         return Player.transform.position;
     }
-
-    private void Break()
-    {
-        if (ClosestInteractables.Count > 0)
-        {
-            float minDistance = float.PositiveInfinity;
-            GameObject interactWith = null;
-            foreach (var item in ClosestInteractables)
-            {
-                float currentDistance = Vector3.Distance(Player.transform.position, item.transform.position);
-                if (currentDistance < minDistance)
-                {
-                    minDistance = currentDistance;
-                    interactWith = item;
-                }
-            }
-            if(minDistance>5)return;
-            ObjectFinder.RemoveObjectFromTile(interactWith);
-            ClosestInteractables.Remove(interactWith);
-        }
-    }
-
-    private void Place()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            RailPlacer.TogglePlacementSequence(hit.point); // Now static
-        }
-
-    }
+    
 
     public RaycastHit GetMousePositionInWorld()
     {

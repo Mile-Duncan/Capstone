@@ -1,3 +1,4 @@
+using System;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -61,5 +62,33 @@ public class PlaceableSplineSegment
             new float3(AEnd.Position.x, AEnd.Position.y, AEnd.Position.z),
             new float3(BEnd.Position.x, BEnd.Position.y, BEnd.Position.z)
         };
+    }
+
+    public bool HasOverlapingKnotsWith(PlaceableSplineSegment other)
+    {
+        if (GetKnotAt(other.AEnd.Position) != -1) return true;
+        if (GetKnotAt(other.BEnd.Position) != -1) return true; 
+        
+        return false;
+    }
+
+    public sbyte GetKnotAt(float3 pos)
+    {
+        return GetKnotAt(pos, out _);
+    }
+    public sbyte GetKnotAt(float3 pos, out BezierKnot? knot)
+    {
+        if (AEnd.Position.Equals(pos))
+        {
+            knot = AEnd;
+            return 0;
+        }else if (BEnd.Position.Equals(pos))
+        {
+            knot = BEnd;
+            return 1;
+        }
+
+        knot = null;
+        return -1;
     }
 }
