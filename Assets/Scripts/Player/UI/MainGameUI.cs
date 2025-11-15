@@ -20,6 +20,7 @@ public class MainGameUI : GameUIControler
         semaphoreButton.onClick.AddListener(OnSemaphoreButtonClicked);
         closeButton.onClick.AddListener(OnCloseButtonClicked);
 
+        
         base.Start();
     }
     
