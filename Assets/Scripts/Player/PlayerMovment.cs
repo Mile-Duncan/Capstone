@@ -68,7 +68,6 @@ public class PlayerMovment : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             BreakEvent.Invoke();
-            print("b");
         }
         
         if (Input.GetMouseButtonDown(0))

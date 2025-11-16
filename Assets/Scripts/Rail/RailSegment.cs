@@ -60,25 +60,8 @@ public class RailSegment : MonoBehaviour
         trackUpdateEvent = new UnityEvent();
         trackUpdateEvent.AddListener(OnTrackUpdateEvent);
 
-        StartCoroutine(UpdateSemaphore());
     }
-
-    private void FixedUpdate()
-    {
-        
-    }
-
-    private IEnumerator UpdateSemaphore()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(1);
-            if (isOccupied)
-            {
-                Semaphore.UpdatePositions(this);
-            }
-        }
-    }
+    
 
     private void OnTrackUpdateEvent()
     {
@@ -135,29 +118,26 @@ public class RailSegment : MonoBehaviour
 
     }
     
-    // NEW STATIC HELPER FUNCTION (Used by Switch.cs and GetStandPosition)
     public static int GetJunctionIndex(RailSegment segment, RailSegment junctionTrack)
     {
-        // We find the index where the segment is connected to the junctionTrack.
-        // This is necessary because connections[0] or [1] might be null after a break.
-        // We rely on the initial structural placement of the track.
-        
-        // NOTE: If the connection array is [null, neighbour], the junction is at 0.
-        // If it's [neighbour, null], the junction is at 1.
-        
-        // This relies on the convention that the other end (the non-junction end) 
-        // will either be null (if detached) or point to a non-junction track.
-        
-        if (segment.connections[0] != null && segment.connections[0] != junctionTrack && !segment.connections.Contains(junctionTrack))
+        RailSegment conectedTrack;
+        segment.GetConnection(false, out conectedTrack, out _);
+            
+        if (junctionTrack.SplineSegment.GetKnots().Contains(segment.SplineSegment.AEnd.Position))
         {
-            // If connections[0] is set and is NOT the junction track, then connections[1] must be the junction end.
+            return 0;
+        }else if (junctionTrack.SplineSegment.GetKnots().Contains(segment.SplineSegment.BEnd.Position))
+        {
             return 1;
         }
-        // Otherwise, connection[0] must be the junction end.
-        return 0;
+        else
+        {
+            throw new Exception("Invalid junction state");
+        }
     }
 
-    // NEW FUNCTION: Calculates the position for the switch stand visual element
+
+    
     public Vector3 GetStandPosition(int junctionIndex)
     {
         // Distance from the spline to place the switch stand
@@ -273,7 +253,7 @@ public class RailSegment : MonoBehaviour
                     }
                     
                     // --- Scenario 2: Switch Creation (One existing track) ---
-                    else if (existingCount == 1)
+                    if (existingCount == 1)
                     {
                         RailSegment trackIn;    
                         RailSegment trackOut1;  
@@ -313,7 +293,7 @@ public class RailSegment : MonoBehaviour
                             Vector3 standPosition = trackOut2.GetStandPosition(trackOut2JunctionIndex);
 
                             // 6. Create the Switch component using the three required arguments.
-                            CreateNewSwitch(trackIn, new []{trackOut1, trackOut2}, indexOnTrackIn, standPosition); 
+                            if (!CreateNewSwitch(trackIn, new[] { trackOut1, trackOut2 }, indexOnTrackIn, standPosition)) return false;
 
                             // 7. Final assignment to ensure all three segments are updated
                             trackIn.trackUpdateEvent.Invoke();
@@ -323,12 +303,7 @@ public class RailSegment : MonoBehaviour
                         }
                         return false;
                     }
-                    
-                    // --- Scenario 3: Already at Max Connections ---
-                    else
-                    {
-                        return false; 
-                    }
+                    return false;
                 }
             }
         }
@@ -358,28 +333,27 @@ public class RailSegment : MonoBehaviour
         return angle > MIN_CONVERGENCE_ANGLE && angle < MAX_CONVERGENCE_ANGLE;
     }
     
-    // UPDATED SIGNATURE
-    public static void CreateNewSwitch(RailSegment trackIn, RailSegment[] tracksOut, int indexOnTrackIn, Vector3 standPosition)
+
+    public static bool CreateNewSwitch(RailSegment trackIn, RailSegment[] tracksOut, int indexOnTrackIn, Vector3 standPosition)
     {
-        Switch trackSwitch = trackIn.gameObject.AddComponent<Switch>(); 
+        GameObject switchStand = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Prefabs/SwitchBox"), trackIn.transform);
+        switchStand.transform.position = standPosition;
+        switchStand.transform.localScale *= 3;
+        Vector3 tan = SplineUtility.EvaluateTangent(trackIn.SplineSegment.PlaceableSpline, indexOnTrackIn == 0 ? 0.01f : 0.99f);
+        switchStand.transform.rotation = Quaternion.LookRotation(tan , Vector3.up);
+        
+        Switch trackSwitch = switchStand.AddComponent<Switch>(); 
     
         // 1. Set the switch reference
         if (trackIn.switches[indexOnTrackIn] != null)
         {
-            MonoBehaviour.Destroy(trackIn.switches[indexOnTrackIn]);
+            return false;
         }
         trackIn.switches[indexOnTrackIn] = trackSwitch;
-        
-        // 2. Set the position of the switch stand (visual element)
-        // Note: The Switch component itself is placed on the TrackIn object.
-        
-        GameObject switchStand = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Prefabs/SwitchBox"), trackSwitch.transform);
-        switchStand.transform.position = standPosition;
-        switchStand.transform.localScale *= 3;
-        switchStand.transform.rotation = Quaternion.Euler(SplineUtility.EvaluateTangent(trackIn.SplineSegment.PlaceableSpline,indexOnTrackIn));
 
         // 3. Initialize the switch
         trackSwitch.InitSwitch(trackIn, tracksOut);
+        return true;
     }
 
     private void OnDestroy()

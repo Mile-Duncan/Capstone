@@ -79,6 +79,9 @@ public class RailSplineFolower : MonoBehaviour
         }
 
         currentSegment.isOccupied = true;
+        
+        if(!RailNetwork.UnsetOccupiedTrack.Contains(currentSegment))RailNetwork.UnsetOccupiedTrack.Add(currentSegment);
+        
         transform.position = currentSegment.splineContainer.EvaluatePosition(minAmount);
         if(Vector3.Angle(transform.forward, tangent)<90) transform.forward = tangent;
         else transform.forward = -tangent;
