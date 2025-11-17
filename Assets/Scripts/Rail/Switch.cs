@@ -1,10 +1,13 @@
 using System;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEditor;
 public class Switch : MonoBehaviour
 {
     private RailSegment TrackIn;
+
+    private GameObject _lever;
     
     private RailSegment[] TracksOut;
     [SerializeField]private bool CurrentTrack;
@@ -16,6 +19,10 @@ public class Switch : MonoBehaviour
         RailSegment trackToDisconnect = TracksOut[previousIdx];
     
         CurrentTrack = !CurrentTrack;
+
+        _lever.transform.localRotation = Quaternion.Euler(0, 0, CurrentTrack ? -45 : 45);
+
+        
         int currentIdx = CurrentTrack ? 1 : 0;
         RailSegment trackToConnect = TracksOut[currentIdx];
 
@@ -44,6 +51,8 @@ public class Switch : MonoBehaviour
   
     public void InitSwitch(RailSegment trackIn, RailSegment[] tracksOut)
     {
+        _lever = gameObject.transform.GetChild(0).gameObject;
+        PlayerMovment.UseEvent.AddListener(CheckSwitchTrackClick);
         TrackIn = trackIn;
         TracksOut = tracksOut;
         CurrentTrack = false; // Default: TracksOut[0] is the active path.
@@ -74,6 +83,18 @@ public class Switch : MonoBehaviour
         else
         {
             Debug.LogError("Switch initialization failed: Could not determine TrackIn index.");
+        }
+        
+        SwitchTrack();
+        SwitchTrack();
+    }
+
+    private void CheckSwitchTrackClick()
+    {
+        RaycastHit raycastHit = PlayerMovment.Instance.GetMousePositionInWorld();
+        if (raycastHit.collider == gameObject.GetComponent<Collider>())
+        {
+            SwitchTrack();
         }
     }
 

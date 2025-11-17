@@ -86,7 +86,7 @@ public static class SemaphorePlacer
         {
             yield return null;
             Vector3? placePosition = GetSemaphorePlacementPosition(PlayerMovment.Instance.GetMousePositionInWorld().point,out placeAt1, out rotation);
-            if(placePosition == null)continue;
+            if(placePosition == null || CurrentPlacingSemaphore == null)continue;
             CurrentPlacingSemaphore.transform.position = placePosition.Value;
             CurrentPlacingSemaphore.transform.position += Vector3.up * 2;
             CurrentPlacingSemaphore.transform.rotation = rotation;

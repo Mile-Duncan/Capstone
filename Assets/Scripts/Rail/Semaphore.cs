@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using UnityEngine;
 
 public class Semaphore : MonoBehaviour
@@ -12,7 +15,13 @@ public class Semaphore : MonoBehaviour
     private static Material _yellowMaterial;
     private static Material _redMaterial;
     private static Material _offMaterial;
+    
+    private static List<Semaphore> _allSemaphores = new List<Semaphore>();
 
+
+    private static int _currentUpdateTick;
+    private int _lastUpdateTick;
+    
     public State SemaphoreState { get; private set; } = State.None;
 
     //public Semaphore UplineConection;
@@ -32,10 +41,56 @@ public class Semaphore : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-    _greenMaterial = Resources.Load<Material>("Materials/lights/Green");
-    _yellowMaterial = Resources.Load<Material>("Materials/lights/Yellow");
-    _redMaterial = Resources.Load<Material>("Materials/lights/Red");
-    _offMaterial = Resources.Load<Material>("Materials/lights/Off");
+        _greenMaterial = Resources.Load<Material>("Materials/lights/Green");
+        _yellowMaterial = Resources.Load<Material>("Materials/lights/Yellow");
+        _redMaterial = Resources.Load<Material>("Materials/lights/Red");
+        _offMaterial = Resources.Load<Material>("Materials/lights/Off");
+
+        if (_currentUpdateTick == 0)
+        {
+            _currentUpdateTick++;
+            StartCoroutine(UpdateSemaphores());
+        }
+    }
+    
+    private IEnumerator UpdateSemaphores()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1);
+            
+            foreach (Semaphore semaphore in _allSemaphores)
+            {
+                semaphore.SetState(Semaphore.State.Clear);
+            }
+
+            foreach (RailSegment segment in RailNetwork.Track)
+            {
+                if (segment.connections[0] is null)
+                {
+                    segment.isOccupied = true;
+                    if(!RailNetwork.UnsetOccupiedTrack.Contains(segment))RailNetwork.UnsetOccupiedTrack.Add(segment);
+                }else if (segment.connections[1] is null)
+                {
+                    if(!RailNetwork.UnsetOccupiedTrack.Contains(segment))RailNetwork.UnsetOccupiedTrack.Add(segment);
+                    segment.isOccupied = true;
+                }
+            }
+            
+            _currentUpdateTick++;
+            while(RailNetwork.UnsetOccupiedTrack.Count>0)
+            {
+                UpdatePositions(RailNetwork.UnsetOccupiedTrack[0]);
+                RailNetwork.UnsetOccupiedTrack.Remove(RailNetwork.UnsetOccupiedTrack[0]);
+
+            }
+            
+            foreach (Semaphore semaphore in _allSemaphores)
+            {
+                semaphore.SetVisualPosition();
+            }
+
+        }
     }
 
     public void Init(RailSegment segment, bool at1)
@@ -43,17 +98,9 @@ public class Semaphore : MonoBehaviour
         AttachedRailSegment = segment;
         IsAt1 = at1;
         
+        _allSemaphores.Add(this);
         
-
-        /*UplineConection = GetNext(true);
-        if (UplineConection != null)
-        {
-            UplineConection.DownlineConection = this;
-            UplineConection.SetOpposing();
-        }
-        DownlineConection = GetNext(false);
-        if(DownlineConection != null) DownlineConection.UplineConection = this;
-        SetOpposing();*/
+        transform.parent = segment.transform;
         
     }
 
@@ -68,7 +115,7 @@ public class Semaphore : MonoBehaviour
         segment.trackSemaphores[1]?.SetState(propagatingState);
         
         if(segment.direction == RailSplineFolower.Direction.None) return; 
-        //propagatingState++;
+        propagatingState++;
 
         int iterations = 100;
         while (true)
@@ -84,7 +131,7 @@ public class Semaphore : MonoBehaviour
             nextSegment.direction = segment.direction;
 
             if(propagatingState!=State.Stop && nextSegment.isOccupied)break;
-            if (nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)] != null && !nextSegment.isOccupied)
+            if (nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)] != null && !nextSegment.isOccupied && propagatingState < State.Clear)
             {
                 nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)].SetState(propagatingState);
                 propagatingState++;
@@ -98,8 +145,16 @@ public class Semaphore : MonoBehaviour
         nextSegment = segment;
         
         nextAt1 = (segment.direction != RailSplineFolower.Direction.Positive);
+        
+        iterations = 100;
         while (true)
         {
+            iterations--;
+            if (iterations <= 0)
+            {
+                throw new WarningException("Semaphores are in a loop! Aborting!");
+            }
+            
             nextSegment.GetConnection(!nextAt1, out nextSegment, out nextAt1);
             
             if (nextSegment == null || nextSegment == segment) return;
@@ -108,81 +163,18 @@ public class Semaphore : MonoBehaviour
             if (nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)] != null)nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)].SetState(State.Stop);
         }
     }
-
-    /*void OnDestroy()
-    {
-        if(UplineConection != null) UplineConection.DownlineConection = DownlineConection;
-        if(DownlineConection != null) DownlineConection.UplineConection = UplineConection;
-    }
-
-    private Semaphore GetNext(bool upline)
-    {
-        RailSegment nextSegment = AttachedRailSegment;
-        bool nextAt1 = IsAt1 ^ upline;
-
-        while (true)
-        {
-            nextSegment.GetConnection(!nextAt1, out nextSegment, out nextAt1);
-
-            if (nextSegment == null || nextSegment == AttachedRailSegment) return null;
-            if (nextSegment.trackSemaphores[Convert.ToByte(nextAt1 ^ upline)] != null) return nextSegment.trackSemaphores[Convert.ToByte(nextAt1 ^ upline)];
-        }
-    }
-
-    private Semaphore GetNext(bool upline)
-    {
-        RailSegment nextSegment = AttachedRailSegment;
-        bool nextAt1 = IsAt1 ^ upline;
-
-        while (true)
-        {
-            nextSegment.GetConnection(!nextAt1, out nextSegment, out nextAt1);
-
-            if (nextSegment == null || nextSegment == AttachedRailSegment) return null;
-            if (nextSegment.trackSemaphores[Convert.ToByte(nextAt1 ^ upline)] != null) return nextSegment.trackSemaphores[Convert.ToByte(nextAt1 ^ upline)];
-        }
-    }
-
-    private void SetOpposing()
-    {
-        RailSegment nextSegment = AttachedRailSegment;
-        bool nextAt1 = IsAt1;
-
-        while (true)
-        {
-            if (nextSegment.trackSemaphores[Convert.ToByte(nextAt1)] != null)
-            {
-                OpposingConection = null;
-                return;
-            }
-
-            if (nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)] != null)
-            {
-                OpposingConection = nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)];
-                return;
-            }
-
-            nextSegment.GetConnection(!nextAt1, out nextSegment, out nextAt1);
-
-            if (nextSegment == null || nextSegment == AttachedRailSegment)
-            {
-                OpposingConection = null;
-                return;
-            }
-        }
-    }*/
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        
-    }
+    
 
     public void SetState(State state)
     {
-        if(SemaphoreState == state)return;
+        if(_lastUpdateTick>= _currentUpdateTick && state >= SemaphoreState)return;
+        _lastUpdateTick = _currentUpdateTick;
         SemaphoreState = state;
-        switch (state)
+    }
+
+    private void SetVisualPosition()
+    {
+        switch (SemaphoreState)
         {
             case State.Clear:
             {
@@ -224,5 +216,10 @@ public class Semaphore : MonoBehaviour
     {
         if(on)redLight.GetComponent<MeshRenderer>().material = _redMaterial;
         else redLight.gameObject.GetComponent<MeshRenderer>().material = _offMaterial;
+    }
+
+    private void OnDestroy()
+    {
+        _allSemaphores.Remove(this);
     }
 }
