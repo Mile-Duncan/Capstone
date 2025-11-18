@@ -32,8 +32,8 @@ public class RailSegment : MonoBehaviour
     public bool isOccupied;
     public Semaphore.State trackCircuit;
     [SerializeField] public SplineContainer splineContainer { get; private set; }
+    [SerializeField] public MeshFilter splineMeshFilter;
     [SerializeField] public SplineMeshExtrude splineExtrude;
-    [SerializeField] private MeshFilter splineMeshFilter;
     [SerializeField] public MeshRenderer splineMeshRenderer;
 
     public UnityEvent trackUpdateEvent;

@@ -6,9 +6,10 @@ using UnityEngine.Splines;
 
 public class RailSplineFolower : MonoBehaviour
 {
-    public enum Direction { Positive = 1, Negative = -1, None = 0}
+    public enum Direction { Positive = 1, Negative = -1, Stopped = 0}
     
     public RailSegment currentSegment;
+    public RailSegment nextSegment;
     public float speed;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -20,7 +21,7 @@ public class RailSplineFolower : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (speed != 0) gameObject.GetComponent<Rigidbody>().linearVelocity = transform.forward * speed;
+        gameObject.GetComponent<Rigidbody>().linearVelocity = transform.forward * speed;
         ConnectToRail();
     }
 
@@ -53,16 +54,22 @@ public class RailSplineFolower : MonoBehaviour
                 minSegment = segment;
             }
         }
-
+        
         if (minDistance > 10000000) return;
 
         currentSegment = minSegment;
         Vector3 currentVelocity = gameObject.GetComponent<Rigidbody>().linearVelocity;
         float3 tangent = currentSegment.splineContainer.EvaluateTangent(minAmount);
+        
+        if(currentSegment== null)return;
+        
+        segmentsToCheck = new List<RailSegment>{currentSegment.connections[0],currentSegment,currentSegment.connections[1]};
+        
+        if(nextSegment==null) nextSegment = segmentsToCheck[0];;
 
         if (currentVelocity.sqrMagnitude < 0.001f)
         {
-            currentSegment.direction = Direction.None;
+            currentSegment.direction = Direction.Stopped;
         }
         else
         {
@@ -71,11 +78,15 @@ public class RailSplineFolower : MonoBehaviour
             if (dotProduct > 0)
             {
                 currentSegment.direction = Direction.Positive;
+                nextSegment = segmentsToCheck[2];
+
             }
             else
             {
                 currentSegment.direction = Direction.Negative;
+                nextSegment = segmentsToCheck[0];
             }
+            
         }
 
         currentSegment.isOccupied = true;

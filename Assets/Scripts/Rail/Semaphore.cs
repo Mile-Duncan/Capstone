@@ -53,7 +53,7 @@ public class Semaphore : MonoBehaviour
         }
     }
     
-    private IEnumerator UpdateSemaphores()
+    private static IEnumerator UpdateSemaphores()
     {
         while (true)
         {
@@ -61,19 +61,22 @@ public class Semaphore : MonoBehaviour
             
             foreach (Semaphore semaphore in _allSemaphores)
             {
-                semaphore.SetState(Semaphore.State.Clear);
+                semaphore.SetState(State.Clear);
             }
 
             foreach (RailSegment segment in RailNetwork.Track)
             {
+                segment.trackCircuit = State.Clear;
                 if (segment.connections[0] is null)
                 {
                     segment.isOccupied = true;
+                    segment.trackCircuit = State.Stop;
                     if(!RailNetwork.UnsetOccupiedTrack.Contains(segment))RailNetwork.UnsetOccupiedTrack.Add(segment);
                 }else if (segment.connections[1] is null)
                 {
                     if(!RailNetwork.UnsetOccupiedTrack.Contains(segment))RailNetwork.UnsetOccupiedTrack.Add(segment);
                     segment.isOccupied = true;
+                    segment.trackCircuit = State.Stop;
                 }
             }
             
@@ -113,8 +116,9 @@ public class Semaphore : MonoBehaviour
         State propagatingState = State.Stop;
         segment.trackSemaphores[0]?.SetState(propagatingState);
         segment.trackSemaphores[1]?.SetState(propagatingState);
+        segment.trackCircuit = State.Stop;
         
-        if(segment.direction == RailSplineFolower.Direction.None) return; 
+        if(segment.direction == RailSplineFolower.Direction.Stopped) return; 
         propagatingState++;
 
         int iterations = 100;
@@ -125,10 +129,8 @@ public class Semaphore : MonoBehaviour
             {
                 throw new WarningException("Semaphores are in a loop! Aborting!");
             }
-            nextSegment.GetConnection(!nextAt1, out nextSegment, out nextAt1);
             
-            if (nextSegment == null || nextSegment == segment) break;
-            nextSegment.direction = segment.direction;
+            if(!PrepNextSegment(true))break;
 
             if(propagatingState!=State.Stop && nextSegment.isOccupied)break;
             if (nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)] != null && !nextSegment.isOccupied && propagatingState < State.Clear)
@@ -155,15 +157,32 @@ public class Semaphore : MonoBehaviour
                 throw new WarningException("Semaphores are in a loop! Aborting!");
             }
             
-            nextSegment.GetConnection(!nextAt1, out nextSegment, out nextAt1);
-            
-            if (nextSegment == null || nextSegment == segment) return;
-            nextSegment.direction = segment.direction;
+            if(!PrepNextSegment())break;
 
             if (nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)] != null)nextSegment.trackSemaphores[Convert.ToByte(!nextAt1)].SetState(State.Stop);
         }
+        
+        bool PrepNextSegment(bool propagete=false)
+        {
+            bool lastAt1 = nextAt1;
+            RailSegment lastSegment = nextSegment;
+            lastSegment.GetConnection(!lastAt1, out nextSegment, out nextAt1);
+            
+            if (nextSegment == null || nextSegment == segment) return false;
+            
+            if(propagete)nextSegment.trackCircuit = propagatingState;
+            
+            if(nextAt1==lastAt1) nextSegment.direction = lastSegment.direction;
+            else
+            {
+                if (lastSegment.direction == RailSplineFolower.Direction.Negative) nextSegment.direction = RailSplineFolower.Direction.Positive;
+                else if (lastSegment.direction == RailSplineFolower.Direction.Positive) nextSegment.direction = RailSplineFolower.Direction.Negative;
+
+            }
+            return true;
+        }
     }
-    
+
 
     public void SetState(State state)
     {

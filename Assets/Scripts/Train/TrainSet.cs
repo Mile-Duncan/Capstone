@@ -5,8 +5,9 @@ public class TrainSet : MonoBehaviour
 {
     public int BreakingForce { get; private set; }
     public int Mass { get; private set; }
+    public bool Forward { get; private set; }
 
-    [SerializeField]private float _speed;
+    [SerializeField] private Semaphore.State currentTrackState;
 
     public float Speed
     {
@@ -27,12 +28,47 @@ public class TrainSet : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        PlayerMovment.UseEvent.AddListener(OnTrainClick);
+    }
+
+    private void OnTrainClick()
+    {
+        RaycastHit raycastHit = PlayerMovment.Instance.GetMousePositionInWorld();
+        if (raycastHit.collider == gameObject.GetComponent<Collider>())
+        {
+            Forward = !Forward;
+        }
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        Speed = _speed;
+        currentTrackState = Semaphore.State.None;
+        foreach (TrainCar car in Cars)
+        {
+            if (car.currentTrackState > currentTrackState) currentTrackState = car.currentTrackState;
+        }
+
+        switch (currentTrackState)
+        {
+            case (Semaphore.State.Clear):
+            {
+                Speed = 15;
+                break;
+            }
+            case (Semaphore.State.Approach):
+            {
+                Speed = 5;
+                break;
+            }
+            default:
+            {
+                Speed = 0;
+                break;
+            }
+        }
+
+        if (!Forward) Speed *= -1;
+
     }
 }
