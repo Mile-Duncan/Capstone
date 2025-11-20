@@ -46,10 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5fc18f5ad133342b447a5316bcafa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainSet
-  _speed: 0
+  currentTrackState: 0
   Cars:
-  - {fileID: 9217133396347207709}
-  - {fileID: 2005991076475115347}
+  - {fileID: 7979490773720798388}
+  - {fileID: 757654946281669626}
 --- !u!1001 &2466946441985968886
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -148,12 +148,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9170769301651656297, guid: 2b0e7bea1366e6b4a807cb86c44ad1bf, type: 3}
   m_PrefabInstance: {fileID: 2466946441985968886}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &9217133396347207709 stripped
+--- !u!114 &7979490773720798388 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6761467966288988907, guid: 2b0e7bea1366e6b4a807cb86c44ad1bf, type: 3}
+  m_CorrespondingSourceObject: {fileID: -3710823005809648062, guid: 2b0e7bea1366e6b4a807cb86c44ad1bf, type: 3}
   m_PrefabInstance: {fileID: 2466946441985968886}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2632102100298099173}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2926afa4d71e9404d85016d6a83cc31f, type: 3}
@@ -224,9 +224,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2b0e7bea1366e6b4a807cb86c44ad1bf, type: 3}
---- !u!114 &2005991076475115347 stripped
+--- !u!114 &757654946281669626 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6761467966288988907, guid: 2b0e7bea1366e6b4a807cb86c44ad1bf, type: 3}
+  m_CorrespondingSourceObject: {fileID: -3710823005809648062, guid: 2b0e7bea1366e6b4a807cb86c44ad1bf, type: 3}
   m_PrefabInstance: {fileID: 5044938730703527352}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

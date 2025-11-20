@@ -73,12 +73,12 @@ public static class SemaphorePlacer
         
         CurrentPlacingSemaphore = Object.Instantiate(SemaphorePrefab).GetComponent<Semaphore>();
 
-        CurrentPlacingSemaphore.StartCoroutine(UpdatePlaceingRailSegment());
+        CurrentPlacingSemaphore.StartCoroutine(UpdatePlaceingSemaphore());
 
 
     }
     
-    private static IEnumerator UpdatePlaceingRailSegment()
+    private static IEnumerator UpdatePlaceingSemaphore()
     {
         bool placeAt1;
         Quaternion rotation;

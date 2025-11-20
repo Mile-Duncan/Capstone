@@ -5,6 +5,10 @@ public class TrainCar : MonoBehaviour
     public int BreakingForce { get; private set; }
     public int Mass { get; private set; }
     public Semaphore.State currentTrackState {get; private set;}
+    public BoxCollider carCollider;
+    public GameObject carBodyDummy;
+    public GameObject carModel;
+    public bool hasCargo = false;
 
     public float Speed
     {
@@ -30,7 +34,7 @@ public class TrainCar : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        transform.rotation = Quaternion.Euler(new Vector3(0, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z));
+        carBodyDummy.transform.rotation = Quaternion.Euler(new Vector3(0, carBodyDummy.transform.rotation.eulerAngles.y, carBodyDummy.transform.rotation.eulerAngles.z));
 
         Semaphore.State? AState = BogieA.nextSegment?.trackCircuit;
         Semaphore.State? BState = BogieB.nextSegment?.trackCircuit;

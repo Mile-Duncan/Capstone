@@ -21,7 +21,17 @@ public class RailSplineFolower : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        gameObject.GetComponent<Rigidbody>().linearVelocity = transform.forward * speed;
+        if (speed == 0)
+        {
+            gameObject.GetComponent<Rigidbody>().isKinematic = true;
+        }
+
+        else
+        {
+            gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            gameObject.GetComponent<Rigidbody>().linearVelocity = transform.forward * speed;
+
+        }
         ConnectToRail();
     }
 

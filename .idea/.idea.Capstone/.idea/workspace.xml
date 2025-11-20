@@ -6,11 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="34e5280a-b1b2-4f79-97e6-262d602aef4b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Capstone/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Capstone/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/RailSegment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/RailSegment.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/Semaphore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/Semaphore.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Prefabs/TrainCar.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/Prefabs/TrainCar.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Prefabs/TrainSet.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/Prefabs/TrainSet.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/UI/GameUIControler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/UI/GameUIControler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/UI/MainGameUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/UI/MainGameUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/UI/SemaphorePlaceUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/UI/SemaphorePlaceUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/RailPlacer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/RailPlacer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/SemaphorePlacer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/SemaphorePlacer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Train/RailSplineFolower.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Train/RailSplineFolower.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Train/TrainCar.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Train/TrainCar.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Train/TrainSet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Train/TrainSet.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Roboto-Bold SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Roboto-Bold SDF.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +51,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Rail/Switch.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Train/RailSplineFolower.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Train/TrainCar.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Train/TrainPlacer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.mathematics@8017b507cc74/Unity.Mathematics/float3.gen.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.splines@1cb7d86fc7ff/Editor/Components/SplineExtrudeEditor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.splines@1cb7d86fc7ff/Editor/Utilities/SplineExtrudeUtility.cs" root0="SKIP_HIGHLIGHTING" />
@@ -66,22 +74,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Attach to Unity Editor.Attach to Unity Editor.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "XThreadsFramesViewSplitterKey": "0.5019685",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Attach to Unity Editor.Attach to Unity Editor.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.34251967&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Standalone Player" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="$PROJECT_DIR$/builds\procedural gen practice.exe" />
@@ -117,10 +125,10 @@
       </option>
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="8368">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="6660">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" value="8368" />
+      <option name="pid" value="6660" />
       <option name="projectPathOnTarget" />
       <option name="selectedOptions">
         <list />
@@ -161,7 +169,9 @@
       <workItem from="1763139598226" duration="3361000" />
       <workItem from="1763244893004" duration="6054000" />
       <workItem from="1763315525169" duration="13856000" />
-      <workItem from="1763482117715" duration="10437000" />
+      <workItem from="1763482117715" duration="12536000" />
+      <workItem from="1763511901745" duration="9656000" />
+      <workItem from="1763657040085" duration="4199000" />
     </task>
     <servers />
   </component>

@@ -1,34 +1,36 @@
 using UnityEngine;
 
-public class SemaphorePlaceUI : GameUIControler
+public class TrainPlaceUI : GameUIControler
 {
+    
+    
     void OnEnable()
     {
         DisableButtons();
-        CurrentState = UIState.Signal;
+        CurrentState = UIState.Train;
         
         PlayerMovment.UseEvent.AddListener(OnUseEvent);
         PlayerMovment.BreakEvent.AddListener(OnBreakEvent);
-        SemaphorePlacer.IsPlacementSequenceActive(true);
+        TrainPlacer.IsPlacementSequenceActive(true);
 
     }
 
     void OnUseEvent()
     {
-        SemaphorePlacer.PlaceSemaphore();
+        TrainPlacer.PlaceTrain();
     }
     
     void OnBreakEvent()
     {
 
-        SemaphorePlacer.RemoveSemaphore();
+        TrainPlacer.RemoveTrain();
     }
 
     void OnDisable()
     {
         PlayerMovment.UseEvent.RemoveListener(OnUseEvent);
         PlayerMovment.BreakEvent.RemoveListener(OnBreakEvent);
-        SemaphorePlacer.IsPlacementSequenceActive(false);
+        TrainPlacer.IsPlacementSequenceActive(false);
 
     }
 }

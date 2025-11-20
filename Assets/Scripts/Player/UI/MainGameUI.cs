@@ -18,6 +18,7 @@ public class MainGameUI : GameUIControler
         
         trackButton.onClick.AddListener(OnTrackButtonClicked);
         semaphoreButton.onClick.AddListener(OnSemaphoreButtonClicked);
+        trainButton.onClick.AddListener(OnTrainButtonClicked);
         closeButton.onClick.AddListener(OnCloseButtonClicked);
 
         

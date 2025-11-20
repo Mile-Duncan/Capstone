@@ -34,9 +34,13 @@ public class TrainSet : MonoBehaviour
     private void OnTrainClick()
     {
         RaycastHit raycastHit = PlayerMovment.Instance.GetMousePositionInWorld();
-        if (raycastHit.collider == gameObject.GetComponent<Collider>())
+        foreach (TrainCar car in Cars)
         {
-            Forward = !Forward;
+            if (raycastHit.collider == car.carCollider)
+            {
+                Forward = !Forward;
+                return;
+            }
         }
     }
 

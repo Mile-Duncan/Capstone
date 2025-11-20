@@ -15,6 +15,7 @@ public class GameUIControler : MonoBehaviour
     protected static bool Initialized = false;
     protected static TrackPlaceUI trackPlaceUI;
     protected static SemaphorePlaceUI semaphorePlaceUI;
+    protected static TrainPlaceUI trainPlaceUI;
 
     
     public enum UIState
@@ -32,6 +33,7 @@ public class GameUIControler : MonoBehaviour
         Initialized = true;
         trackPlaceUI = Instantiate(Resources.Load("UI/TrackPlaceUI"), transform).GetComponent<TrackPlaceUI>();
         semaphorePlaceUI = Instantiate(Resources.Load("UI/SemaphorePlaceUI"), transform).GetComponent<SemaphorePlaceUI>();
+        trainPlaceUI = Instantiate(Resources.Load("UI/TrainPlaceUI"), transform).GetComponent<TrainPlaceUI>();
 
     }
 
@@ -62,11 +64,17 @@ public class GameUIControler : MonoBehaviour
         semaphorePlaceUI.gameObject.SetActive(true);
         
     }
+
+    protected static void OnTrainButtonClicked()
+    {
+        trainPlaceUI.gameObject.SetActive(true);
+    }
     
     protected static void OnCloseButtonClicked()
     {
         trackPlaceUI.gameObject.SetActive(false);
         semaphorePlaceUI.gameObject.SetActive(false);
+        trainPlaceUI.gameObject.SetActive(false);
         
         EnableButtons();
         CurrentState = UIState.Move;

@@ -19,6 +19,8 @@ public static class RailPlacer
     private static RailSegment _placingRailSegment;
     private static Vector3 _controlPointPosition;
     private static Vector3 _currentAnchorTangent;
+
+    private static int _trackNum;
     
     public static Vector3 GetTrackPlacementPosition(Vector3 originalPlacePosition, bool firstClick = false)
     {
@@ -83,7 +85,8 @@ public static class RailPlacer
 
         _isValid = false;
 
-        _placingRailSegment = new GameObject("Rail Segment: " + RailNetwork.Track.Count).AddComponent<RailSegment>();
+        _placingRailSegment = new GameObject("Rail Segment: " + _trackNum).AddComponent<RailSegment>();
+        _trackNum++;
 
         clickPosition = GetTrackPlacementPosition(clickPosition, true);
         
