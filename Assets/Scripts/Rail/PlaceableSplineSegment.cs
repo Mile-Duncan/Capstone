@@ -5,7 +5,7 @@ using UnityEngine.Splines;
 
 public class PlaceableSplineSegment
 {
-    private const float ControlPointPrecent = 1f;
+    private const float ControlPointPrecent = .5f;
     public Spline PlaceableSpline { get; private set; }
     public BezierKnot AEnd{ get; private set; }
     public BezierKnot BEnd{ get; private set; }
@@ -27,7 +27,7 @@ public class PlaceableSplineSegment
         PlaceableSpline.Add(BEnd);
     }
     
-    public void Modify(float3? Knot1Position, float3? Knot2Position, float3? ControlPoint)
+    public void Modify(float3? Knot1Position, float3? Knot2Position, float3? ControlPoint, Vector3? BEndKnotTan = null)
     {
         if (ControlPoint != null) this.ControlPoint = ControlPoint.Value;
         Knot1Position ??= AEnd.Position;
@@ -38,12 +38,18 @@ public class PlaceableSplineSegment
         float3 knot2Pos = (float3)Knot2Position;
         
         float3 controlPoint1 = GetControlPoint(controlPoint, knot1Pos);
-        float3 controlPoint2 = GetControlPoint(controlPoint, knot2Pos);
+        float3 controlPoint2;
+
+        if (BEndKnotTan == null) controlPoint2 = GetControlPoint(controlPoint, knot2Pos);
+        else controlPoint2 = -BEndKnotTan.Value;
+        
 
         Vector3 AEndFacePoint = (this.ControlPoint - knot1Pos);
+        Vector3 BEndFacePoint = -(this.ControlPoint - knot2Pos);
         
-        AEnd = new BezierKnot(knot1Pos, controlPoint1, 0,rotation:Quaternion.LookRotation(AEndFacePoint));
+        AEnd = new BezierKnot(knot1Pos,0 , controlPoint1);
         BEnd = new BezierKnot(knot2Pos, controlPoint2, 0);
+
         PlaceableSpline[0] = AEnd;
         PlaceableSpline[1] = BEnd;
     }

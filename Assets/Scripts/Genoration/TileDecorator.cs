@@ -57,6 +57,7 @@ public class TileDecorator
             SetType(i);
             
             if(i%2==0)PlaceTrees(i);
+            else PlaceMine();
         } 
         
         SetMaterials();
@@ -146,6 +147,16 @@ public class TileDecorator
         
         //if (SubTypes[i] == "Grass" && rand > 997) TreeGenorator.Test(SubX, SubY, SubZ, CurrentTile);
         //if (SubTypes[i] == "Forest" && rand > 950) TreeGenorator.Test(SubX, SubY, SubZ, CurrentTile);
+
+    }
+    
+    private void PlaceMine()
+    {
+        int rand = TileManager.GetRandom((int)(3*((SubX * SubZ) + SubY * (SubZ - SubX))), 0, 1000);
+        if(rand < 999) return;
+        GameObject mine = Object.Instantiate(Resources.Load<GameObject>("Prefabs/BlueCubeMine"));
+        mine.transform.position = new Vector3(SubX, SubY, SubZ);
+        mine.transform.parent = CurrentTile.transform;
 
     }
     

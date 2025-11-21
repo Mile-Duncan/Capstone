@@ -228,133 +228,99 @@ public class RailSegment : MonoBehaviour
     }
     
     public static bool ConectSegments(RailSegment segmentA, RailSegment segmentB)
+{
+    Vector3[] Aends = {segmentA.SplineSegment.AEnd.Position, segmentA.SplineSegment.BEnd.Position};
+    Vector3[] Bends = {segmentB.SplineSegment.AEnd.Position, segmentB.SplineSegment.BEnd.Position};
+    
+    for(int a = 0; a < Aends.Length; a++) 
     {
-        Vector3[] Aends = {segmentA.SplineSegment.AEnd.Position, segmentA.SplineSegment.BEnd.Position};
-        Vector3[] Bends = {segmentB.SplineSegment.AEnd.Position, segmentB.SplineSegment.BEnd.Position};
-        
-        for(int a = 0; a < Aends.Length; a++) 
+        for (int b = 0; b < Bends.Length; b++)
         {
-            for (int b = 0; b < Bends.Length; b++)
+            if (Aends[a].Equals(Bends[b]))
             {
-                if (Aends[a].Equals(Bends[b]))
+                RailSegment connA = segmentA.connections[a];
+                RailSegment connB = segmentB.connections[b];
+                int existingCount = (connA != null ? 1 : 0) + (connB != null ? 1 : 0);
+
+                // --- Scenario 1: Simple Connection (Unchanged) ---
+                if (existingCount == 0)
                 {
-                    RailSegment connA = segmentA.connections[a];
-                    RailSegment connB = segmentB.connections[b];
-                    int existingCount = (connA != null ? 1 : 0) + (connB != null ? 1 : 0);
-
-                    // --- Scenario 1: Simple Connection (Standard Track) ---
-                    if (existingCount == 0)
-                    {
-                        segmentA.connections[a] = segmentB;
-                        segmentB.connections[b] = segmentA;
-                        segmentA.trackUpdateEvent.Invoke();
-                        segmentB.trackUpdateEvent.Invoke();
-                        return true;
-                    }
-                    
-                    // --- Scenario 2: Switch Creation (One existing track) ---
-                    if (existingCount == 1)
-                    {
-                        RailSegment trackIn;    
-                        RailSegment trackOut1;  
-                        RailSegment trackOut2;  
-                        
-                        if (connA != null) 
-                        {
-                            trackIn = connA;
-                            trackOut1 = segmentA; 
-                            trackOut2 = segmentB;
-                        }
-                        else 
-                        {
-                            trackIn = connB;
-                            trackOut1 = segmentB; 
-                            trackOut2 = segmentA;
-                        }
-
-                        // 1. Calculate all necessary junction indices
-                        int indexOnTrackIn = Array.IndexOf(trackIn.connections, trackOut1); 
-                        int trackOut1JunctionIndex = (trackOut1 == segmentA) ? a : b; 
-                        int trackOut2JunctionIndex = (trackOut2 == segmentA) ? a : b;
-                        
-                        // 2. Check for valid index on trackIn and a diverging angle
-                        if (indexOnTrackIn != -1 && CheckForConvergingTracks(trackOut1, trackOut1JunctionIndex, trackOut2, trackOut2JunctionIndex))
-                        {
-                            // 3. FIX: Temporarily set the reciprocal links BEFORE initialization.
-                            // This guarantees Switch.InitSwitch can find the indices.
-                            trackIn.connections[indexOnTrackIn] = trackOut1;
-                            trackOut1.connections[trackOut1JunctionIndex] = trackIn;
-                            trackOut2.connections[trackOut2JunctionIndex] = trackIn;
-
-                            // 4. Break the existing direct link on TrackIn
-                            trackIn.connections[indexOnTrackIn] = null;
-
-                            // 5. Calculate the stand position on trackOut2
-                            Vector3 standPosition = trackOut2.GetStandPosition(trackOut2JunctionIndex);
-
-                            // 6. Create the Switch component using the three required arguments.
-                            if (!CreateNewSwitch(trackIn, new[] { trackOut1, trackOut2 }, indexOnTrackIn, standPosition)) return false;
-
-                            // 7. Final assignment to ensure all three segments are updated
-                            trackIn.trackUpdateEvent.Invoke();
-                            trackOut1.trackUpdateEvent.Invoke();
-                            trackOut2.trackUpdateEvent.Invoke();
-                            return true;
-                        }
-                        return false;
-                    }
-                    return false;
+                    segmentA.connections[a] = segmentB;
+                    segmentB.connections[b] = segmentA;
+                    segmentA.trackUpdateEvent.Invoke();
+                    segmentB.trackUpdateEvent.Invoke();
+                    return true;
                 }
+                
+                // --- Scenario 2: Switch Creation (Three segments meet) ---
+                if (existingCount == 1)
+                {
+                    // 1. Identify the three segments meeting at the junction
+                    RailSegment T_junc;       // segmentA or segmentB (the one at the junction)
+                    RailSegment T_exist;      // connA or connB (the existing segment)
+                    RailSegment T_new;        // the other of segmentA/segmentB (the new segment)
+                    
+                    int T_junc_Index; // Index (a or b) on T_junc
+
+                    if (connA != null) 
+                    {
+                        T_junc = segmentA; T_junc_Index = a; T_exist = connA; T_new = segmentB;
+                    }
+                    else 
+                    {
+                        T_junc = segmentB; T_junc_Index = b; T_exist = connB; T_new = segmentA;
+                    }
+
+                    // 2. Perform safety check on T_junc and T_new using the original connection indices
+                    // We must ensure the angle is wide enough to be a switch.
+                    //if (!CheckForConvergingTracks(T_junc, T_junc_Index, T_new, (T_new == segmentA ? a : b))) return false;
+
+                    // 3. CREATE THE SWITCH: Pass all three segments to the static helper.
+                    // The Switch class will handle role determination and initialization.
+                    if (!Switch.CreateSwitchFromSegments(T_exist, T_junc, T_new)) return false;
+
+                    // 4. Update events (The Switch class should handle its own updates, 
+                    // but these ensure surrounding tracks update their type/state).
+                    T_exist.trackUpdateEvent.Invoke();
+                    T_junc.trackUpdateEvent.Invoke();
+                    T_new.trackUpdateEvent.Invoke();
+                    return true;
+                }
+                return false;
             }
         }
-        return false;
     }
+    return false;
+}
+    
 
     public static bool CheckForConvergingTracks(RailSegment segmentA, int endIndexA, RailSegment segmentB, int endIndexB)
     {
-        const float EPSILON = 0.05f;
-        
-        float tA = (endIndexA == 0) ? EPSILON : (1.0f - EPSILON); 
-        float tB = (endIndexB == 0) ? EPSILON : (1.0f - EPSILON); 
-        
-        Vector3 tangentA = (Vector3)segmentA.splineContainer.Spline.EvaluateTangent(tA);
-        Vector3 tangentB = (Vector3)segmentB.splineContainer.Spline.EvaluateTangent(tB);
+        // The previous implementation likely failed because it relied on Spline.EvaluateTangent(t)
+        // without knowing if t was closer to 0 or 1, resulting in reversed or inconsistent vectors.
+        // We now use the reliable GetOutwardTangent method.
+    
+        // 1. Get the Outward Tangent for both segments.
+        // These vectors (V_A and V_B) start at the junction and point away from it.
+        Vector3 V_A = segmentA.GetOutwardTangent(endIndexA);
+        Vector3 V_B = segmentB.GetOutwardTangent(endIndexB);
 
-        if (tangentA.sqrMagnitude < 0.0001f || tangentB.sqrMagnitude < 0.0001f)
-        {
-            return false;
-        }
+        // 2. Calculate the angle between the two outward vectors.
+        float angle = Vector3.Angle(V_A, V_B);
 
-        float angle = Vector3.Angle(tangentA.normalized, tangentB.normalized);
+        // 3. Define acceptable angle bounds for a switch.
+        // If the angle is too small (near 0), it's a straight line/simple connection.
+        // If the angle is too large (near 180), it's likely a simple connection or poorly formed tracks.
+    
+        // Tweak these constants based on how sharp you allow your switches to be.
+        const float MIN_DIVERGENCE_ANGLE = 5.0f;  // Minimum angle for a switch to be valid (e.g., 5 degrees)
+        const float MAX_DIVERGENCE_ANGLE = 175.0f; // Maximum angle (180 is a straight line)
 
-        const float MIN_CONVERGENCE_ANGLE = 5.0f;  
-        const float MAX_CONVERGENCE_ANGLE = 175.0f; 
-
-        return angle > MIN_CONVERGENCE_ANGLE && angle < MAX_CONVERGENCE_ANGLE;
+        // Check if the angle is within the valid range for a diverging switch.
+        return angle > MIN_DIVERGENCE_ANGLE && angle < MAX_DIVERGENCE_ANGLE;
     }
     
-
-    public static bool CreateNewSwitch(RailSegment trackIn, RailSegment[] tracksOut, int indexOnTrackIn, Vector3 standPosition)
-    {
-        GameObject switchStand = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Prefabs/SwitchBox"), trackIn.transform);
-        switchStand.transform.position = standPosition;
-        switchStand.transform.localScale *= 3;
-        Vector3 tan = SplineUtility.EvaluateTangent(trackIn.SplineSegment.PlaceableSpline, indexOnTrackIn == 0 ? 0.01f : 0.99f);
-        switchStand.transform.rotation = Quaternion.LookRotation(tan , Vector3.up);
-        
-        Switch trackSwitch = switchStand.AddComponent<Switch>(); 
     
-        // 1. Set the switch reference
-        if (trackIn.switches[indexOnTrackIn] != null)
-        {
-            return false;
-        }
-        trackIn.switches[indexOnTrackIn] = trackSwitch;
-
-        // 3. Initialize the switch
-        trackSwitch.InitSwitch(trackIn, tracksOut);
-        return true;
-    }
 
     private void OnDestroy()
     {
@@ -378,5 +344,24 @@ public class RailSegment : MonoBehaviour
             return;
         }
         isConectedAtEnd1 = false;
+    }
+    
+    // In RailSegment.cs: Ensure this method is public
+
+    public Vector3 GetOutwardTangent(int junctionIndex, float sampleOffset = 0.01f)
+    {
+        // Determine the sample t-value: 0.01 if index=0, 0.99 if index=1.
+        float t_sample = (junctionIndex == 0) ? sampleOffset : (1.0f - sampleOffset);
+    
+        // Evaluate the spline's default tangent (T, direction 0 -> 1)
+        Vector3 tangent_raw = (Vector3)splineContainer.Spline.EvaluateTangent(t_sample);
+
+        // If junctionIndex is 1, the raw tangent points INWARD. We must reverse it.
+        if (junctionIndex == 1)
+        {
+            return -tangent_raw.normalized;
+        }
+        // If junctionIndex is 0, the raw tangent points OUTWARD.
+        return tangent_raw.normalized;
     }
 }

@@ -6,16 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="34e5280a-b1b2-4f79-97e6-262d602aef4b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Capstone/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Capstone/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Resources/Prefabs/TrainCar.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/Prefabs/TrainCar.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Resources/Prefabs/TrainSet.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/Prefabs/TrainSet.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/UI/GameUIControler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/UI/GameUIControler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/UI/MainGameUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/UI/MainGameUI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/UI/SemaphorePlaceUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/UI/SemaphorePlaceUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Genoration/TileDecorator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Genoration/TileDecorator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/PlaceableSplineSegment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/PlaceableSplineSegment.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/RailPlacer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/RailPlacer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/SemaphorePlacer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/SemaphorePlacer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Train/RailSplineFolower.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Train/RailSplineFolower.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Train/TrainCar.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Train/TrainCar.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/RailSegment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/RailSegment.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Rail/Switch.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Rail/Switch.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Train/TrainSet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Train/TrainSet.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Roboto-Bold SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Roboto-Bold SDF.asset" afterDir="false" />
     </list>
@@ -42,6 +37,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9b2ca2197f604d0fab04dc1c0e8b15011f5a00/04/aa6871b3/Quaternion.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3ea01e77be99618395f448b16bd7cc2bd4248bd9e5d8474964b2d97f39c5d74/System.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/ExternalSorces.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Genoration/POI/TestMine.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Rail/PlaceableSplineSegment.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Rail/RailNetwork.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Rail/RailPlacer.cs" root0="FORCE_HIGHLIGHTING" />
@@ -171,7 +167,7 @@
       <workItem from="1763315525169" duration="13856000" />
       <workItem from="1763482117715" duration="12536000" />
       <workItem from="1763511901745" duration="9656000" />
-      <workItem from="1763657040085" duration="4199000" />
+      <workItem from="1763657040085" duration="18058000" />
     </task>
     <servers />
   </component>
@@ -193,13 +189,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Assets/Scripts/Train/TrainSet.cs</url>
-          <line>6</line>
+          <line>7</line>
           <properties documentPath="C:\Users\miles\Documents\GitHub\Capstone\Assets\Scripts\Train\TrainSet.cs" containingFunctionPresentation="Property 'Mass'">
             <startOffsets>
-              <option value="167" />
+              <option value="181" />
             </startOffsets>
             <endOffsets>
-              <option value="171" />
+              <option value="185" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="1" />

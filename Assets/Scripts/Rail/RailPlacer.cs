@@ -7,8 +7,8 @@ using Unity.Mathematics;
 
 public static class RailPlacer
 {
-    private const float SnapRange = 3f;
-    private const float MinLength = 5f;
+    private const float SnapRange = 5f;
+    private const float MinLength = 10f;
     private const float MaxLength = 50f;
 
     
@@ -19,11 +19,14 @@ public static class RailPlacer
     private static RailSegment _placingRailSegment;
     private static Vector3 _controlPointPosition;
     private static Vector3 _currentAnchorTangent;
+    private static Vector3? _secondAnchorTangent;
+
 
     private static int _trackNum;
     
     public static Vector3 GetTrackPlacementPosition(Vector3 originalPlacePosition, bool firstClick = false)
     {
+        _secondAnchorTangent = null;
         foreach (RailSegment segment in RailNetwork.Track)
         {
             if (segment == _placingRailSegment) continue;
@@ -35,7 +38,10 @@ public static class RailPlacer
                     _currentAnchorTangent = segment.SplineSegment.ControlPoint;
                     _placingRailSegment.SplineSegment = new PlaceableSplineSegment(clickPosition, clickPosition, _controlPointPosition);
                 }
-                //RailSegment.ConectSegments(segment,_placingRailSegment);
+                else
+                {
+                    _secondAnchorTangent = segment.SplineSegment.AEnd.TangentOut;
+                }
 
                 return clickPosition;
             };
@@ -47,7 +53,10 @@ public static class RailPlacer
                     _currentAnchorTangent = segment.SplineSegment.ControlPoint;
                     _placingRailSegment.SplineSegment = new PlaceableSplineSegment(clickPosition, clickPosition, _controlPointPosition);
                 }
-                //RailSegment.ConectSegments(segment,_placingRailSegment);
+                else
+                {
+                    _secondAnchorTangent = segment.SplineSegment.BEnd.TangentIn;
+                }
 
                 return clickPosition;
             };
@@ -106,7 +115,8 @@ public static class RailPlacer
         {
             Vector3 mousePosition = GetTrackPlacementPosition(PlayerMovment.Instance.GetMousePositionInWorld().point);
             SetControlPointPosition(mousePosition, _firstPosition);
-            _placingRailSegment.SplineSegment.Modify(null, mousePosition, _controlPointPosition);
+            if(_secondAnchorTangent==null)_placingRailSegment.SplineSegment.Modify(null, mousePosition, _controlPointPosition);
+            else _placingRailSegment.SplineSegment.Modify(null, mousePosition, _controlPointPosition, _secondAnchorTangent.Value);
             _placingRailSegment.splineExtrude.UpdateMesh();
             _isValid = ValidatePlacement();
             if (_isValid) _placingRailSegment.splineMeshRenderer.material.SetColor("_Color", Color.cyan);

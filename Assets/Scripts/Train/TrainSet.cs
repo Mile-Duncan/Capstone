@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ public class TrainSet : MonoBehaviour
     public int BreakingForce { get; private set; }
     public int Mass { get; private set; }
     public bool Forward { get; private set; }
+
+    public static List<TrainSet> TrainSets = new List<TrainSet>();
 
     [SerializeField] private Semaphore.State currentTrackState;
 
@@ -29,6 +32,7 @@ public class TrainSet : MonoBehaviour
     void Start()
     {
         PlayerMovment.UseEvent.AddListener(OnTrainClick);
+        TrainSets.Add(this);
     }
 
     private void OnTrainClick()
@@ -74,5 +78,10 @@ public class TrainSet : MonoBehaviour
 
         if (!Forward) Speed *= -1;
 
+    }
+
+    private void OnDestroy()
+    {
+        TrainSets.Remove(this);
     }
 }
