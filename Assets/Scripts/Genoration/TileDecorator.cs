@@ -57,7 +57,7 @@ public class TileDecorator
             SetType(i);
             
             if(i%2==0)PlaceTrees(i);
-            else PlaceMine();
+            else PlacePOI();
         } 
         
         SetMaterials();
@@ -150,14 +150,24 @@ public class TileDecorator
 
     }
     
-    private void PlaceMine()
+    private void PlacePOI()
     {
-        int rand = TileManager.GetRandom((int)(3*((SubX * SubZ) + SubY * (SubZ - SubX))), 0, 1000);
-        if(rand < 999) return;
-        GameObject mine = Object.Instantiate(Resources.Load<GameObject>("Prefabs/BlueCubeMine"));
-        mine.transform.position = new Vector3(SubX, SubY, SubZ);
-        mine.transform.parent = CurrentTile.transform;
+        int rand = TileManager.GetRandom((int)(3*((SubX * SubZ) + SubY * (SubZ - SubX))), 0, 9000);
+        GameObject POI;
+
+        if (rand == 1)
+        {
+            POI = Object.Instantiate(Resources.Load<GameObject>("Prefabs/BlueCubeMine"));
+
+        }else if (rand == 2)
+        {
+            POI = Object.Instantiate(Resources.Load<GameObject>("Prefabs/BlueCubeFactory"));
+
+        }
+        else return;
+        POI.transform.position = new Vector3(SubX, SubY, SubZ);
+        POI.transform.parent = CurrentTile.transform;
 
     }
-    
+
 }

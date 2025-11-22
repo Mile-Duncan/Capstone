@@ -15,7 +15,7 @@ public class TrainPlacer
 
         if (!IsPlacing)
         {
-            if(CurrentPlacingTrain.gameObject!=null)Object.Destroy(CurrentPlacingTrain.gameObject);
+            if(CurrentPlacingTrain?.gameObject!=null)Object.Destroy(CurrentPlacingTrain.gameObject);
             return;
         }
         
@@ -41,18 +41,22 @@ public class TrainPlacer
     public static void PlaceTrain()
     {
         if (!CheckValidity()) return;
+        ScoreHandler.AddCash(-1000);
 
         CurrentPlacingTrain.carCollider.GetComponent<MeshRenderer>().material.color = Color.white;
         CurrentPlacingTrain.carCollider.GetComponent<MeshRenderer>().material.color *= new Vector4(1f, 1f, 1f, 0f);
         TrainSet trainSet = new GameObject("Train "+NextTrainNumber).AddComponent<TrainSet>();
         trainSet.Cars.Add(CurrentPlacingTrain);
+        CurrentPlacingTrain.transform.parent = trainSet.transform;
+        CurrentPlacingTrain.Initialize();
         NextTrainNumber++;
         CurrentPlacingTrain = Object.Instantiate(TrainCarPrefab).GetComponent<TrainCar>();
     }
 
     public static void RemoveTrain()
     {
-        Object.Destroy(CurrentPlacingTrain);
+        TrainCar removeTrain = PlayerMovment.Instance.GetMousePositionInWorld().collider.GetComponent<TrainCar>();
+        if(removeTrain != null) Object.Destroy(removeTrain.gameObject);
     }
 
     private static bool CheckValidity()

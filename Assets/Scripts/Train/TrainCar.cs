@@ -8,8 +8,9 @@ public class TrainCar : MonoBehaviour
     public BoxCollider carCollider;
     public GameObject carBodyDummy;
     public GameObject carModel;
-    public bool hasCargo = false;
-
+    public CarCargo cargoModel;
+    
+    private bool initialized = false;
     public float Speed
     {
         get
@@ -31,11 +32,19 @@ public class TrainCar : MonoBehaviour
         
     }
 
+    public void Initialize()
+    {
+        initialized = true;
+        BogieA.Initialize();
+        BogieB.Initialize();
+    }
+    
     // Update is called once per frame
     void FixedUpdate()
     {
         carBodyDummy.transform.rotation = Quaternion.Euler(new Vector3(0, carBodyDummy.transform.rotation.eulerAngles.y, carBodyDummy.transform.rotation.eulerAngles.z));
 
+        if(!initialized)return;
         Semaphore.State? AState = BogieA.nextSegment?.trackCircuit;
         Semaphore.State? BState = BogieB.nextSegment?.trackCircuit;
 

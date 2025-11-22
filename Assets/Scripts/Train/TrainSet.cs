@@ -6,9 +6,9 @@ public class TrainSet : MonoBehaviour
 {
     public int BreakingForce { get; private set; }
     public int Mass { get; private set; }
-    public bool Forward { get; private set; }
+    public bool Forward;
 
-    public static List<TrainSet> TrainSets = new List<TrainSet>();
+    [SerializeField] public static List<TrainSet> TrainSets = new List<TrainSet>();
 
     [SerializeField] private Semaphore.State currentTrackState;
 
@@ -43,6 +43,7 @@ public class TrainSet : MonoBehaviour
             if (raycastHit.collider == car.carCollider)
             {
                 Forward = !Forward;
+                car.BogieA.nextSegment.trackCircuit = Semaphore.State.Clear;
                 return;
             }
         }

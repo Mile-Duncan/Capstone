@@ -49,7 +49,7 @@ public class Semaphore : MonoBehaviour
         if (_currentUpdateTick == 0)
         {
             _currentUpdateTick++;
-            StartCoroutine(UpdateSemaphores());
+            PlayerMovment.Instance.StartCoroutine(UpdateSemaphores());
         }
     }
     

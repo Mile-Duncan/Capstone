@@ -98,6 +98,7 @@ public static class SemaphorePlacer
     public static void PlaceSemaphore()
     {
         if (!CheckValidity()) return;
+        ScoreHandler.AddCash(-100);
         
         CurrentPlacingSemaphore.GetComponent<MeshRenderer>().material.color = Color.white;
         CurrentPlacingSemaphore.gameObject.transform.localScale *= 0.95f;
@@ -111,6 +112,7 @@ public static class SemaphorePlacer
 
     public static void RemoveSemaphore()
     {
+        if(CurrentTrack==null)return;
         if(CurrentTrack.trackSemaphores[Convert.ToByte(IsAt1)] != null) Object.Destroy(CurrentTrack.trackSemaphores[Convert.ToByte(IsAt1)].gameObject);
     }
 
@@ -122,7 +124,7 @@ public static class SemaphorePlacer
         if(CurrentTrack.trackSemaphores[Convert.ToByte(IsAt1)] != null)return false;
         
         CurrentPlacingSemaphore.GetComponent<MeshRenderer>().material.color = Color.cyan;
-
+        
         return true;
     }
 }

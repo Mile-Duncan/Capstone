@@ -18,6 +18,17 @@ public static class RailNetwork
         
     }
 
+    public static double GetTotalLength()
+    {
+        double totalLength = 0;
+        foreach (RailSegment rail in Track)
+        {
+            totalLength += rail.SplineSegment.PlaceableSpline.GetLength();
+        }
+        return totalLength;
+    }
+    
+
     public static List<RailSegment> GetSegmentsWithNodeAt(Vector3 position, RailSegment[] ignore = null)
     {
         List<RailSegment> segments = new List<RailSegment>();

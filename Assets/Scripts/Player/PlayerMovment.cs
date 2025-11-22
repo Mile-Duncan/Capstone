@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class PlayerMovment : MonoBehaviour
 {
@@ -17,8 +18,26 @@ public class PlayerMovment : MonoBehaviour
     public static UnityEvent UseEvent = new();
     public static UnityEvent BreakEvent = new();
 
+    // --- Camera Control Fields ---
+    private Vector3 initialMousePosition; 
+    private Vector3 lastMousePosition;    
+    
+    [Header("Camera Rotation/Movement Settings")]
+    [Tooltip("Controls the speed of camera rotation (degrees per mouse delta).")]
+    public float rotationSensitivity = 0.3f; 
+    
+    [Tooltip("Controls the speed of world translation/panning.")]
+    public float panSensitivity = 0.8f; // Increased default sensitivity for better testing
+    
+    private const float CLICK_TOLERANCE = 5.0f; // Max distance mouse can move to still count as a click
+    
+    // Pitch limits for vertical rotation
+    public float maxPitch = 85f; 
+    public float minPitch = 10f; 
+    // ----------------------
 
-    // Start is called before the first frame update
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         Instance = this;
@@ -29,9 +48,18 @@ public class PlayerMovment : MonoBehaviour
         ViewPointCenter = new GameObject("ViewPointCenter");
         Player.name = "Player";
         Player.tag = "Player";
-        Player.transform.position = new Vector3(TileManager.MapSize/2, 50, TileManager.MapSize/2);
+        // NOTE: TileManager.MapSize is assumed to be accessible here.
+        Player.transform.position = new Vector3(TileManager.MapSize/2, 50, TileManager.MapSize/2); 
         Player.transform.Rotate(0,45f,0);
 
+        // **Camera Setup: Make Camera a child of Player for orbiting**
+        if (Camera.main != null)
+        {
+            Camera.main.transform.SetParent(Player.transform, false);
+            // Set camera local offset position
+            Camera.main.transform.localPosition = new Vector3(-20, 30, -20);
+            Camera.main.transform.localRotation = Quaternion.identity; 
+        }
     }
 
     // Update is called once per frame
@@ -40,48 +68,108 @@ public class PlayerMovment : MonoBehaviour
         if (Player == null)
         {
             Player = GameObject.FindWithTag("Player");
+            if (Player == null) return; // Prevent errors if Player creation failed
         }
-        int MoveX = 0;
-        int MoveY = 0;
-        int MoveZ = 0;
-        if (Input.GetKey(KeyCode.P))
+        
+        // Check if cursor is over a UI element (we check this inside button handlers)
+        bool isPointerOverUI = EventSystem.current.IsPointerOverGameObject();
+        
+        // --- 1. State Pre-Check ---
+        bool rmbHeld = Input.GetMouseButton(1);
+        bool lmbHeld = Input.GetMouseButton(0);
+        
+        // Determine active control mode
+        bool isTranslating = lmbHeld && !isPointerOverUI; // LMB for translation
+        bool isRotating = rmbHeld && !isPointerOverUI;                 // RMB for rotation
+
+        // --- 2. Handle Mouse Input Events (Down/Up) ---
+        
+        // Track mouse position on the first frame a button is pressed or released
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-            MoveX = 10;
+            initialMousePosition = Input.mousePosition;
+            lastMousePosition = Input.mousePosition;
         }
 
-        if (Input.GetKey(KeyCode.Semicolon))
+        // RMB UP: Stop ROTATION or execute BreakEvent click
+        if (Input.GetMouseButtonUp(1) && !isPointerOverUI)
         {
-            MoveX = -10;
+            // If the mouse didn't move much, treat it as a click.
+            if (Vector3.Distance(initialMousePosition, Input.mousePosition) < CLICK_TOLERANCE)
+            {
+                BreakEvent.Invoke();
+            }
         }
         
-        if (Input.GetKey(KeyCode.L))
+        // LMB UP: Execute UseEvent click (only if it wasn't a translation drag)
+        if (Input.GetMouseButtonUp(0) && !isPointerOverUI)
         {
-            MoveZ = 10;
+             // If LMB was released AND SHIFT was NOT held, it's a Use click.
+             // If SHIFT was held, the primary action was drag/translation, so we ignore the click event.
+
+             if (Vector3.Distance(initialMousePosition, Input.mousePosition) < CLICK_TOLERANCE)
+             {
+                 UseEvent.Invoke();
+
+             }
         }
 
-        if (Input.GetKey(KeyCode.Quote))
+        // --- 3. Camera Control Logic (Executed every frame) ---
+        
+        Vector3 currentMousePosition = Input.mousePosition;
+        Vector3 delta = currentMousePosition - lastMousePosition;
+        
+        if (isRotating)
         {
-            MoveZ = -10;
+            // A. ROTATION Logic (RMB hold)
+            
+            // YAW (Horizontal Rotation) - Rotates Player object
+            float yaw = delta.x * rotationSensitivity; 
+            Player.transform.Rotate(Vector3.up, yaw, Space.World);
 
+            // PITCH (Vertical Rotation) - Rotates Camera object
+            float pitchDelta = -delta.y * rotationSensitivity; 
+
+            Vector3 currentEuler = Camera.main.transform.localEulerAngles;
+            float currentPitch = currentEuler.x;
+
+            if (currentPitch > 180) currentPitch -= 360;
+
+            float newPitch = currentPitch + pitchDelta;
+            newPitch = Mathf.Clamp(newPitch, minPitch, maxPitch);
+
+            Camera.main.transform.localRotation = Quaternion.Euler(newPitch, currentEuler.y, currentEuler.z);
         }
-        
-        if (Input.GetMouseButtonDown(1))
+        else if (isTranslating) 
         {
-            BreakEvent.Invoke();
+            // B. TRANSLATION/PANNING Logic (LMB + SHIFT hold)
+            
+            Vector3 panVector = Vector3.zero;
+
+            // Panning left/right translates along the camera's Right vector
+            panVector += Camera.main.transform.right * -delta.x * panSensitivity; 
+            
+            // Panning up/down translates along the camera's Forward vector (on the XZ plane)
+            Vector3 forwardFlat = Camera.main.transform.forward;
+            forwardFlat.y = 0;
+            forwardFlat.Normalize();
+            
+            panVector += forwardFlat * -delta.y * panSensitivity;
+            
+            // Apply movement to the Player (the camera target)
+            Player.transform.position += panVector;
         }
         
-        if (Input.GetMouseButtonDown(0))
-        {
-            UseEvent.Invoke();
-        }
+        lastMousePosition = currentMousePosition; // Update for the next frame
         
+        // --- 4. System Logic ---
+        
+        // Re-add Escape to Quit
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
         }
-        
-        Player.transform.position += new Vector3(MoveX,MoveY,MoveZ);
-        
+
         MoveConectedObjects(Player.transform.position);
         
 
@@ -91,9 +179,7 @@ public class PlayerMovment : MonoBehaviour
     private void MoveConectedObjects(Vector3 pos)
     {
         ViewPointCenter.transform.position = pos + new Vector3(35,0,35);
-        Camera.main.transform.position = pos + new Vector3(-20,30,-20);
-
-        //Water.transform.position = new Vector3(pos.x, 0, pos.z);
+        // Camera position is handled by Player.transform
     }
     
     /*IEnumerator UpdateLoadedTiles()

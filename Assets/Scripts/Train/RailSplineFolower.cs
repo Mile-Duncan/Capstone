@@ -11,6 +11,9 @@ public class RailSplineFolower : MonoBehaviour
     public RailSegment currentSegment;
     public RailSegment nextSegment;
     public float speed;
+    
+    private bool initialized = false;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -18,10 +21,15 @@ public class RailSplineFolower : MonoBehaviour
         
     }
 
+    public void Initialize()
+    {
+        initialized = true;
+    }
+
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (speed == 0)
+        if (speed == 0||!initialized)
         {
             gameObject.GetComponent<Rigidbody>().isKinematic = true;
         }
@@ -38,7 +46,7 @@ public class RailSplineFolower : MonoBehaviour
     private void ConnectToRail()
     {
         List<RailSegment> segmentsToCheck;
-        if (currentSegment == null) segmentsToCheck = RailNetwork.Track;
+        if (currentSegment == null||!initialized) segmentsToCheck = RailNetwork.Track;
         else
         {
             segmentsToCheck = new List<RailSegment>{currentSegment,currentSegment.connections[0],currentSegment.connections[1]};
@@ -72,37 +80,43 @@ public class RailSplineFolower : MonoBehaviour
         float3 tangent = currentSegment.splineContainer.EvaluateTangent(minAmount);
         
         if(currentSegment== null)return;
-        
-        segmentsToCheck = new List<RailSegment>{currentSegment.connections[0],currentSegment,currentSegment.connections[1]};
-        
-        if(nextSegment==null) nextSegment = segmentsToCheck[0];;
-
-        if (currentVelocity.sqrMagnitude < 0.001f)
+        if (initialized)
         {
-            currentSegment.direction = Direction.Stopped;
-        }
-        else
-        {
-            float dotProduct = Vector3.Dot(currentVelocity.normalized, ((Vector3)tangent).normalized);
 
-            if (dotProduct > 0)
+            segmentsToCheck = new List<RailSegment>
+                { currentSegment.connections[0], currentSegment, currentSegment.connections[1] };
+
+            if (nextSegment == null) nextSegment = segmentsToCheck[0];
+            ;
+
+            if (currentVelocity.sqrMagnitude < 0.001f)
             {
-                currentSegment.direction = Direction.Positive;
-                nextSegment = segmentsToCheck[2];
-
+                currentSegment.direction = Direction.Stopped;
             }
             else
             {
-                currentSegment.direction = Direction.Negative;
-                nextSegment = segmentsToCheck[0];
+                float dotProduct = Vector3.Dot(currentVelocity.normalized, ((Vector3)tangent).normalized);
+
+                if (dotProduct > 0)
+                {
+                    currentSegment.direction = Direction.Positive;
+                    nextSegment = segmentsToCheck[2];
+
+                }
+                else
+                {
+                    currentSegment.direction = Direction.Negative;
+                    nextSegment = segmentsToCheck[0];
+                }
+
             }
-            
+
+            currentSegment.isOccupied = true;
+
+            if (!RailNetwork.UnsetOccupiedTrack.Contains(currentSegment))
+                RailNetwork.UnsetOccupiedTrack.Add(currentSegment);
         }
 
-        currentSegment.isOccupied = true;
-        
-        if(!RailNetwork.UnsetOccupiedTrack.Contains(currentSegment))RailNetwork.UnsetOccupiedTrack.Add(currentSegment);
-        
         transform.position = currentSegment.splineContainer.EvaluatePosition(minAmount);
         if(Vector3.Angle(transform.forward, tangent)<90) transform.forward = tangent;
         else transform.forward = -tangent;

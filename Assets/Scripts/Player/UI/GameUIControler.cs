@@ -16,6 +16,7 @@ public class GameUIControler : MonoBehaviour
     protected static TrackPlaceUI trackPlaceUI;
     protected static SemaphorePlaceUI semaphorePlaceUI;
     protected static TrainPlaceUI trainPlaceUI;
+    protected static ContractMenuUI contractMenuUI;
 
     
     public enum UIState
@@ -23,7 +24,8 @@ public class GameUIControler : MonoBehaviour
         Move,
         Track,
         Train,
-        Signal
+        Signal,
+        Contract,
     }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -34,7 +36,7 @@ public class GameUIControler : MonoBehaviour
         trackPlaceUI = Instantiate(Resources.Load("UI/TrackPlaceUI"), transform).GetComponent<TrackPlaceUI>();
         semaphorePlaceUI = Instantiate(Resources.Load("UI/SemaphorePlaceUI"), transform).GetComponent<SemaphorePlaceUI>();
         trainPlaceUI = Instantiate(Resources.Load("UI/TrainPlaceUI"), transform).GetComponent<TrainPlaceUI>();
-
+        contractMenuUI = Instantiate(Resources.Load("UI/ContractUI"), transform).GetComponent<ContractMenuUI>();
     }
 
     protected static void DisableButtons()
@@ -75,6 +77,7 @@ public class GameUIControler : MonoBehaviour
         trackPlaceUI.gameObject.SetActive(false);
         semaphorePlaceUI.gameObject.SetActive(false);
         trainPlaceUI.gameObject.SetActive(false);
+        contractMenuUI.gameObject.SetActive(false);
         
         EnableButtons();
         CurrentState = UIState.Move;
